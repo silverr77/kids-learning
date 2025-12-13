@@ -1,0 +1,109 @@
+import { Level, Category } from '@/types';
+
+export const levels: Level[] = [
+  // Animals - Level 1
+  {
+    id: 'animals-1',
+    category: 'animals',
+    levelNumber: 1,
+    title: 'Farm Animals',
+    requiredStars: 0,
+    unlocked: true,
+    items: [
+      { id: 'cow', name: 'Cow', pronunciation: 'cow' },
+      { id: 'pig', name: 'Pig', pronunciation: 'pig' },
+      { id: 'chicken', name: 'Chicken', pronunciation: 'chicken' },
+      { id: 'sheep', name: 'Sheep', pronunciation: 'sheep' },
+      { id: 'horse', name: 'Horse', pronunciation: 'horse' },
+    ],
+  },
+  // Animals - Level 2
+  {
+    id: 'animals-2',
+    category: 'animals',
+    levelNumber: 2,
+    title: 'Wild Animals',
+    requiredStars: 3,
+    unlocked: false,
+    items: [
+      { id: 'lion', name: 'Lion', pronunciation: 'lion' },
+      { id: 'elephant', name: 'Elephant', pronunciation: 'elephant' },
+      { id: 'tiger', name: 'Tiger', pronunciation: 'tiger' },
+      { id: 'bear', name: 'Bear', pronunciation: 'bear' },
+      { id: 'monkey', name: 'Monkey', pronunciation: 'monkey' },
+    ],
+  },
+  // Letters - Level 1
+  {
+    id: 'letters-1',
+    category: 'letters',
+    levelNumber: 1,
+    title: 'Letters A-E',
+    requiredStars: 0,
+    unlocked: true,
+    items: [
+      { id: 'a', name: 'A', pronunciation: 'ay', data: { uppercase: 'A', lowercase: 'a' } },
+      { id: 'b', name: 'B', pronunciation: 'bee', data: { uppercase: 'B', lowercase: 'b' } },
+      { id: 'c', name: 'C', pronunciation: 'see', data: { uppercase: 'C', lowercase: 'c' } },
+      { id: 'd', name: 'D', pronunciation: 'dee', data: { uppercase: 'D', lowercase: 'd' } },
+      { id: 'e', name: 'E', pronunciation: 'ee', data: { uppercase: 'E', lowercase: 'e' } },
+    ],
+  },
+  // Numbers - Level 1
+  {
+    id: 'numbers-1',
+    category: 'numbers',
+    levelNumber: 1,
+    title: 'Numbers 1-5',
+    requiredStars: 0,
+    unlocked: true,
+    items: [
+      { id: '1', name: 'One', pronunciation: 'one', data: { number: 1, count: 1 } },
+      { id: '2', name: 'Two', pronunciation: 'two', data: { number: 2, count: 2 } },
+      { id: '3', name: 'Three', pronunciation: 'three', data: { number: 3, count: 3 } },
+      { id: '4', name: 'Four', pronunciation: 'four', data: { number: 4, count: 4 } },
+      { id: '5', name: 'Five', pronunciation: 'five', data: { number: 5, count: 5 } },
+    ],
+  },
+  // Colors - Level 1
+  {
+    id: 'colors-1',
+    category: 'colors',
+    levelNumber: 1,
+    title: 'Basic Colors',
+    requiredStars: 0,
+    unlocked: true,
+    items: [
+      { id: 'red', name: 'Red', pronunciation: 'red', data: { color: '#FF0000' } },
+      { id: 'blue', name: 'Blue', pronunciation: 'blue', data: { color: '#0000FF' } },
+      { id: 'yellow', name: 'Yellow', pronunciation: 'yellow', data: { color: '#FFFF00' } },
+      { id: 'green', name: 'Green', pronunciation: 'green', data: { color: '#00FF00' } },
+      { id: 'orange', name: 'Orange', pronunciation: 'orange', data: { color: '#FFA500' } },
+    ],
+  },
+  // Shapes - Level 1
+  {
+    id: 'shapes-1',
+    category: 'shapes',
+    levelNumber: 1,
+    title: 'Basic Shapes',
+    requiredStars: 0,
+    unlocked: true,
+    items: [
+      { id: 'circle', name: 'Circle', pronunciation: 'circle', data: { shape: 'circle' } },
+      { id: 'square', name: 'Square', pronunciation: 'square', data: { shape: 'square' } },
+      { id: 'triangle', name: 'Triangle', pronunciation: 'triangle', data: { shape: 'triangle' } },
+      { id: 'rectangle', name: 'Rectangle', pronunciation: 'rectangle', data: { shape: 'rectangle' } },
+      { id: 'star', name: 'Star', pronunciation: 'star', data: { shape: 'star' } },
+    ],
+  },
+];
+
+export const getLevelsByCategory = (category: Category): Level[] => {
+  return levels.filter(level => level.category === category);
+};
+
+export const getLevelById = (id: string): Level | undefined => {
+  return levels.find(level => level.id === id);
+};
+
