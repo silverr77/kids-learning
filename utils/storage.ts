@@ -11,6 +11,7 @@ export interface AppSettings {
   musicVolume: number;
   language: string;
   screenTimeReminder: boolean;
+  theme?: 'light' | 'dark' | 'system';
 }
 
 export const getProgress = async (): Promise<UserProgress | null> => {
@@ -46,6 +47,7 @@ export const getSettings = async (): Promise<AppSettings> => {
     musicVolume: 0.7,
     language: 'en',
     screenTimeReminder: true,
+    theme: 'system',
   };
 };
 
