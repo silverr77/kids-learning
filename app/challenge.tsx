@@ -6,8 +6,9 @@ import {
   TouchableOpacity,
   Dimensions,
   Alert,
+  ScrollView,
 } from 'react-native';
-import { SafeAreaView } from 'react-native-safe-area-context';
+import { SafeAreaView, useSafeAreaInsets } from 'react-native-safe-area-context';
 import { Ionicons } from '@expo/vector-icons';
 import { useRouter, useLocalSearchParams } from 'expo-router';
 import { Button } from '@/components/Button';
@@ -26,6 +27,7 @@ export default function ChallengeScreen() {
   const levelId = params.levelId as string;
   const { colors } = useTheme();
   const { t, isRTL } = useLanguage();
+  const insets = useSafeAreaInsets();
   const [items, setItems] = useState<LearningItem[]>([]);
   const [questions, setQuestions] = useState<ChallengeQuestion[]>([]);
   const [currentQuestion, setCurrentQuestion] = useState(0);
@@ -172,7 +174,7 @@ export default function ChallengeScreen() {
   const progress = ((currentQuestion + 1) / questions.length) * 100;
 
   return (
-    <SafeAreaView style={[styles.container, { backgroundColor: colors.background }]}>
+    <SafeAreaView style={[styles.container, { backgroundColor: colors.background }]} edges={['top']}>
       {/* Header with Exit Button */}
       <View style={[styles.header, { backgroundColor: colors.primary }]}>
         <TouchableOpacity onPress={handleExit} style={styles.exitButton}>
@@ -187,68 +189,77 @@ export default function ChallengeScreen() {
         <View style={{ width: 40 }} />
       </View>
 
-      {/* Progress */}
-      <View style={[styles.progressContainer, { backgroundColor: colors.surface }]}>
-        <View style={styles.progressBar}>
-          <View style={[styles.progressFill, { width: `${progress}%`, backgroundColor: colors.primary }]} />
+      <ScrollView 
+        style={styles.scrollView}
+        contentContainerStyle={[
+          styles.scrollContent,
+          { paddingBottom: canProceed ? 100 + insets.bottom : 20 + insets.bottom }
+        ]}
+        showsVerticalScrollIndicator={false}
+      >
+        {/* Progress */}
+        <View style={[styles.progressContainer, { backgroundColor: colors.surface }]}>
+          <View style={styles.progressBar}>
+            <View style={[styles.progressFill, { width: `${progress}%`, backgroundColor: colors.primary }]} />
+          </View>
         </View>
-      </View>
 
-      {/* Question */}
-      <View style={[styles.questionContainer, { backgroundColor: colors.surface }]}>
-        <Text style={[styles.questionText, { color: colors.text }]}>{question.question}</Text>
-        <TouchableOpacity
-          style={[styles.soundButton, { backgroundColor: colors.primary }]}
-          onPress={handlePlaySound}
-        >
-          <Ionicons name="volume-high" size={40} color="#FFFFFF" />
-        </TouchableOpacity>
-      </View>
+        {/* Question */}
+        <View style={[styles.questionContainer, { backgroundColor: colors.surface }]}>
+          <Text style={[styles.questionText, { color: colors.text }]}>{question.question}</Text>
+          <TouchableOpacity
+            style={[styles.soundButton, { backgroundColor: colors.primary }]}
+            onPress={handlePlaySound}
+          >
+            <Ionicons name="volume-high" size={40} color="#FFFFFF" />
+          </TouchableOpacity>
+        </View>
 
-      {/* Options */}
-      <View style={styles.optionsContainer}>
-        {question.options?.map((optionId) => {
-          const optionItem = items.find(item => item.id === optionId);
-          if (!optionItem) return null;
+        {/* Options */}
+        <View style={styles.optionsContainer}>
+          {question.options?.map((optionId) => {
+            const optionItem = items.find(item => item.id === optionId);
+            if (!optionItem) return null;
 
-          const isSelected = selectedAnswer === optionId;
-          const isCorrectAnswer = optionId === question.correctAnswer;
-          let buttonStyle: any = styles.optionButton;
-          
-          if (showFeedback) {
-            if (isCorrectAnswer) {
-              buttonStyle = [styles.optionButton, styles.correctButton];
-            } else if (isSelected && !isCorrect) {
-              buttonStyle = [styles.optionButton, styles.incorrectButton];
+            const isSelected = selectedAnswer === optionId;
+            const isCorrectAnswer = optionId === question.correctAnswer;
+            let buttonStyle: any = styles.optionButton;
+            
+            if (showFeedback) {
+              if (isCorrectAnswer) {
+                buttonStyle = [styles.optionButton, styles.correctButton];
+              } else if (isSelected && !isCorrect) {
+                buttonStyle = [styles.optionButton, styles.incorrectButton];
+              }
             }
-          }
 
-          return (
-            <TouchableOpacity
-              key={optionId}
-              style={buttonStyle}
-              onPress={() => handleAnswer(optionId)}
-              disabled={showFeedback}
-            >
-              {renderItemVisual(optionItem, 100, colors)}
-              <Text style={styles.optionText}>{optionItem.name}</Text>
-            </TouchableOpacity>
-          );
-        })}
-      </View>
-
-      {/* Feedback */}
-      {showFeedback && (
-        <View style={styles.feedbackContainer}>
-          <Text style={[styles.feedbackText, { color: isCorrect ? colors.success : colors.error }]}>
-            {isCorrect ? t('correct') + '!' : `${t('incorrect')}: ${correctItem?.name}`}
-          </Text>
+            return (
+              <TouchableOpacity
+                key={optionId}
+                style={buttonStyle}
+                onPress={() => handleAnswer(optionId)}
+                disabled={showFeedback}
+              >
+                {renderItemVisual(optionItem, 100, colors)}
+                <Text style={styles.optionText}>{optionItem.name}</Text>
+              </TouchableOpacity>
+            );
+          })}
         </View>
-      )}
 
-      {/* Navigation */}
+        {/* Feedback */}
+        {showFeedback && (
+          <View style={styles.feedbackContainer}>
+            <Text style={[styles.feedbackText, { color: isCorrect ? colors.success : colors.error }]}>
+              {isCorrect ? t('correct') + '!' : `${t('incorrect')}: ${correctItem?.name}`}
+            </Text>
+          </View>
+        )}
+      </ScrollView>
+
+      {/* Navigation - Fixed at bottom */}
       {canProceed && (
-        <View style={styles.navigationContainer}>
+        <View style={[styles.navigationContainer, { paddingBottom: insets.bottom }]}>
           <Button
             title={currentQuestion === questions.length - 1 
               ? (isRTL ? `← ${t('seeResults')}` : `${t('seeResults')} →`)
@@ -483,6 +494,12 @@ function createStyles(colors: any, isRTL: boolean) {
       marginTop: 10,
       textTransform: 'capitalize',
     },
+    scrollView: {
+      flex: 1,
+    },
+    scrollContent: {
+      flexGrow: 1,
+    },
     feedbackContainer: {
       alignItems: 'center',
       padding: 20,
@@ -492,8 +509,21 @@ function createStyles(colors: any, isRTL: boolean) {
       fontWeight: 'bold',
     },
     navigationContainer: {
+      position: 'absolute',
+      bottom: 0,
+      left: 0,
+      right: 0,
       padding: 20,
+      paddingTop: 10,
       alignItems: 'center',
+      backgroundColor: colors.background,
+      borderTopWidth: 1,
+      borderTopColor: colors.border,
+      shadowColor: '#000',
+      shadowOffset: { width: 0, height: -2 },
+      shadowOpacity: 0.1,
+      shadowRadius: 4,
+      elevation: 5,
     },
     errorContainer: {
       flex: 1,

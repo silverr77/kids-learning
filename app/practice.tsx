@@ -6,8 +6,9 @@ import {
   TouchableOpacity,
   Dimensions,
   Alert,
+  ScrollView,
 } from 'react-native';
-import { SafeAreaView } from 'react-native-safe-area-context';
+import { SafeAreaView, useSafeAreaInsets } from 'react-native-safe-area-context';
 import { Ionicons } from '@expo/vector-icons';
 import { useRouter, useLocalSearchParams } from 'expo-router';
 import { Button } from '@/components/Button';
@@ -26,6 +27,7 @@ export default function PracticeScreen() {
   const levelId = params.levelId as string;
   const { colors } = useTheme();
   const { t, isRTL } = useLanguage();
+  const insets = useSafeAreaInsets();
   const [items, setItems] = useState<LearningItem[]>([]);
   const [currentQuestion, setCurrentQuestion] = useState(0);
   const [selectedAnswer, setSelectedAnswer] = useState<string | null>(null);
@@ -144,7 +146,7 @@ export default function PracticeScreen() {
   const progress = ((currentQuestion + 1) / items.length) * 100;
 
   return (
-    <SafeAreaView style={[styles.container, { backgroundColor: colors.background }]}>
+    <SafeAreaView style={[styles.container, { backgroundColor: colors.background }]} edges={['top']}>
       {/* Header with Exit Button */}
       <View style={[styles.header, { backgroundColor: colors.primary }]}>
         <TouchableOpacity onPress={handleExit} style={styles.exitButton}>
@@ -154,69 +156,78 @@ export default function PracticeScreen() {
         <View style={{ width: 40 }} />
       </View>
 
-      {/* Progress */}
-      <View style={[styles.progressContainer, { backgroundColor: colors.surface }]}>
-        <View style={styles.progressBar}>
-          <View style={[styles.progressFill, { width: `${progress}%` }]} />
-        </View>
-        <Text style={styles.progressText}>
-          Practice: {currentQuestion + 1} / {items.length}
-        </Text>
-      </View>
-
-      {/* Question */}
-      <View style={[styles.questionContainer, { backgroundColor: colors.surface }]}>
-        <Text style={[styles.instructionText, { color: colors.text }]}>
-          {t('practice')}: {t('question')} {currentQuestion + 1}
-        </Text>
-        <TouchableOpacity
-          style={[styles.soundButton, { backgroundColor: colors.primary }]}
-          onPress={handlePlaySound}
-        >
-          <Ionicons name="volume-high" size={40} color="#FFFFFF" />
-        </TouchableOpacity>
-      </View>
-
-      {/* Options Grid */}
-      <View style={styles.optionsContainer}>
-        {shuffledItems.map((item) => {
-          const isSelected = selectedAnswer === item.id;
-          const isCorrectAnswer = item.id === currentItem.id;
-          let buttonStyle: any = styles.optionButton;
-          
-          if (showFeedback) {
-            if (isCorrectAnswer) {
-              buttonStyle = [styles.optionButton, styles.correctButton];
-            } else if (isSelected && !isCorrect) {
-              buttonStyle = [styles.optionButton, styles.incorrectButton];
-            }
-          }
-
-          return (
-            <TouchableOpacity
-              key={item.id}
-              style={buttonStyle}
-              onPress={() => handleAnswer(item.id)}
-              disabled={showFeedback}
-            >
-              {renderItemVisual(item, 80, styles, colors)}
-              <Text style={styles.optionText}>{item.name}</Text>
-            </TouchableOpacity>
-          );
-        })}
-      </View>
-
-      {/* Feedback */}
-      {showFeedback && (
-        <View style={styles.feedbackContainer}>
-          <Text style={[styles.feedbackText, { color: isCorrect ? colors.success : colors.error }]}>
-            {isCorrect ? t('greatJob') : t('tryAgain')}
+      <ScrollView 
+        style={styles.scrollView}
+        contentContainerStyle={[
+          styles.scrollContent,
+          { paddingBottom: 100 + insets.bottom }
+        ]}
+        showsVerticalScrollIndicator={false}
+      >
+        {/* Progress */}
+        <View style={[styles.progressContainer, { backgroundColor: colors.surface }]}>
+          <View style={styles.progressBar}>
+            <View style={[styles.progressFill, { width: `${progress}%` }]} />
+          </View>
+          <Text style={styles.progressText}>
+            {t('practice')}: {currentQuestion + 1} / {items.length}
           </Text>
         </View>
-      )}
 
-      {/* Skip Button */}
-      <View style={styles.skipContainer}>
+        {/* Question */}
+        <View style={[styles.questionContainer, { backgroundColor: colors.surface }]}>
+          <Text style={[styles.instructionText, { color: colors.text }]}>
+            {t('practice')}: {t('question')} {currentQuestion + 1}
+          </Text>
+          <TouchableOpacity
+            style={[styles.soundButton, { backgroundColor: colors.primary }]}
+            onPress={handlePlaySound}
+          >
+            <Ionicons name="volume-high" size={40} color="#FFFFFF" />
+          </TouchableOpacity>
+        </View>
+
+        {/* Options Grid */}
+        <View style={styles.optionsContainer}>
+          {shuffledItems.map((item) => {
+            const isSelected = selectedAnswer === item.id;
+            const isCorrectAnswer = item.id === currentItem.id;
+            let buttonStyle: any = styles.optionButton;
+            
+            if (showFeedback) {
+              if (isCorrectAnswer) {
+                buttonStyle = [styles.optionButton, styles.correctButton];
+              } else if (isSelected && !isCorrect) {
+                buttonStyle = [styles.optionButton, styles.incorrectButton];
+              }
+            }
+
+            return (
+              <TouchableOpacity
+                key={item.id}
+                style={buttonStyle}
+                onPress={() => handleAnswer(item.id)}
+                disabled={showFeedback}
+              >
+                {renderItemVisual(item, 80, styles, colors)}
+                <Text style={styles.optionText}>{item.name}</Text>
+              </TouchableOpacity>
+            );
+          })}
+        </View>
+
+        {/* Feedback */}
+        {showFeedback && (
+          <View style={styles.feedbackContainer}>
+            <Text style={[styles.feedbackText, { color: isCorrect ? colors.success : colors.error }]}>
+              {isCorrect ? t('greatJob') : t('tryAgain')}
+            </Text>
+          </View>
+        )}
+      </ScrollView>
+
+      {/* Skip Button - Fixed at bottom */}
+      <View style={[styles.skipContainer, { paddingBottom: insets.bottom }]}>
         <Button
           title={isRTL ? `← ${t('challenge')}` : `${t('challenge')} →`}
           onPress={async () => {
@@ -458,9 +469,28 @@ function createStyles(colors: any, isRTL: boolean) {
       fontSize: 28,
       fontWeight: 'bold',
     },
+    scrollView: {
+      flex: 1,
+    },
+    scrollContent: {
+      flexGrow: 1,
+    },
     skipContainer: {
+      position: 'absolute',
+      bottom: 0,
+      left: 0,
+      right: 0,
       padding: 20,
+      paddingTop: 10,
       alignItems: 'center',
+      backgroundColor: colors.background,
+      borderTopWidth: 1,
+      borderTopColor: colors.border,
+      shadowColor: '#000',
+      shadowOffset: { width: 0, height: -2 },
+      shadowOpacity: 0.1,
+      shadowRadius: 4,
+      elevation: 5,
     },
     errorContainer: {
       flex: 1,
