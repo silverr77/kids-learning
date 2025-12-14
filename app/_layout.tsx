@@ -23,6 +23,7 @@ function RootStack() {
         animation: isRTL ? 'slide_from_left' : 'slide_from_right',
       }}
     >
+      <Stack.Screen name="onboarding" options={{ headerShown: false }} />
       <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
       <Stack.Screen name="level-overview" />
       <Stack.Screen name="learning" />

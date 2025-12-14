@@ -4,6 +4,7 @@ import { UserProgress, Category } from '@/types';
 const STORAGE_KEYS = {
   PROGRESS: '@learnforkids:progress',
   SETTINGS: '@learnforkids:settings',
+  ONBOARDING_COMPLETED: '@learnforkids:onboarding_completed',
 };
 
 export const getDefaultProgress = (): UserProgress => {
@@ -88,6 +89,24 @@ export const resetProgress = async (): Promise<void> => {
     await AsyncStorage.removeItem(STORAGE_KEYS.PROGRESS);
   } catch (error) {
     console.error('Error resetting progress:', error);
+  }
+};
+
+export const getOnboardingCompleted = async (): Promise<boolean> => {
+  try {
+    const value = await AsyncStorage.getItem(STORAGE_KEYS.ONBOARDING_COMPLETED);
+    return value === 'true';
+  } catch (error) {
+    console.error('Error getting onboarding status:', error);
+    return false;
+  }
+};
+
+export const setOnboardingCompleted = async (): Promise<void> => {
+  try {
+    await AsyncStorage.setItem(STORAGE_KEYS.ONBOARDING_COMPLETED, 'true');
+  } catch (error) {
+    console.error('Error setting onboarding status:', error);
   }
 };
 
