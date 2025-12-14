@@ -23,27 +23,27 @@ interface ThemeContextType {
 }
 
 const lightColors = {
-  primary: '#58CC02',
+  primary: '#409c44',
   secondary: '#1CB0F6',
   background: '#FFFFFF',
   surface: '#F7F7F7',
   text: '#3C3C43',
   textSecondary: '#8E8E93',
   border: '#E5E5EA',
-  success: '#58CC02',
+  success: '#409c44',
   warning: '#FFB800',
   error: '#FF3B30',
 };
 
 const darkColors = {
-  primary: '#58CC02',
+  primary: '#4CAF50',
   secondary: '#1CB0F6',
   background: '#000000',
   surface: '#1C1C1E',
   text: '#FFFFFF',
   textSecondary: '#8E8E93',
   border: '#38383A',
-  success: '#58CC02',
+  success: '#4CAF50',
   warning: '#FFB800',
   error: '#FF3B30',
 };
