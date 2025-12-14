@@ -58,8 +58,8 @@ export default function PracticeScreen() {
         // Get language-specific name
         updatedItem.name = getItemName(item.id, language as 'en' | 'fr' | 'ar');
         
-        // For numbers category, get language-specific audio
-        if (level.category === 'numbers') {
+        // For numbers and animals categories, get language-specific audio
+        if (level.category === 'numbers' || level.category === 'animals') {
           const languageAudio = getItemAudio(item.id, level.category, language as 'en' | 'fr' | 'ar');
           if (languageAudio) {
             updatedItem.sound = languageAudio;
@@ -309,16 +309,27 @@ const renderItemVisual = (item: LearningItem, size: number = 100, styles: any, c
   }
 
   const emojiMap: Record<string, string> = {
+    // Farm animals
     cow: '🐄',
-    pig: '🐷',
     chicken: '🐔',
     sheep: '🐑',
     horse: '🐴',
+    duck: '🦆',
+    goat: '🐐',
+    rabbit: '🐰',
+    donkey: '🫏',
+    rooster: '🐓',
+    // Wild animals
     lion: '🦁',
     elephant: '🐘',
     tiger: '🐅',
     bear: '🐻',
     monkey: '🐵',
+    giraffe: '🦒',
+    zebra: '🦓',
+    wolf: '🐺',
+    fox: '🦊',
+    panda: '🐼',
   };
   return (
     <View style={{ width: size, height: size, justifyContent: 'center', alignItems: 'center', marginBottom: 10 }}>

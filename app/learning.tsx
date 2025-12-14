@@ -57,8 +57,8 @@ export default function LearningScreen() {
         // Get language-specific name
         updatedItem.name = getItemName(item.id, language as 'en' | 'fr' | 'ar');
         
-        // For numbers category, get language-specific audio
-        if (level.category === 'numbers') {
+        // For numbers and animals categories, get language-specific audio
+        if (level.category === 'numbers' || level.category === 'animals') {
           const languageAudio = getItemAudio(item.id, level.category, language as 'en' | 'fr' | 'ar');
           if (languageAudio) {
             updatedItem.sound = languageAudio;
@@ -282,16 +282,27 @@ const renderItemVisual = (item: LearningItem, styles: any) => {
 
   // Default: Emoji representation
   const emojiMap: Record<string, string> = {
+    // Farm animals
     cow: '🐄',
-    pig: '🐷',
     chicken: '🐔',
     sheep: '🐑',
     horse: '🐴',
+    duck: '🦆',
+    goat: '🐐',
+    rabbit: '🐰',
+    donkey: '🫏',
+    rooster: '🐓',
+    // Wild animals
     lion: '🦁',
     elephant: '🐘',
     tiger: '🐅',
     bear: '🐻',
     monkey: '🐵',
+    giraffe: '🦒',
+    zebra: '🦓',
+    wolf: '🐺',
+    fox: '🦊',
+    panda: '🐼',
   };
   return <Text style={styles.emoji}>{emojiMap[item.id] || '📚'}</Text>;
 };

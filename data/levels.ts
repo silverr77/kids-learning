@@ -11,10 +11,14 @@ export const levels: Level[] = [
     unlocked: true,
     items: [
       { id: 'cow', name: 'Cow', pronunciation: 'cow' },
-      { id: 'pig', name: 'Pig', pronunciation: 'pig' },
       { id: 'chicken', name: 'Chicken', pronunciation: 'chicken' },
       { id: 'sheep', name: 'Sheep', pronunciation: 'sheep' },
       { id: 'horse', name: 'Horse', pronunciation: 'horse' },
+      { id: 'duck', name: 'Duck', pronunciation: 'duck' },
+      { id: 'goat', name: 'Goat', pronunciation: 'goat' },
+      { id: 'rabbit', name: 'Rabbit', pronunciation: 'rabbit' },
+      { id: 'donkey', name: 'Donkey', pronunciation: 'donkey' },
+      { id: 'rooster', name: 'Rooster', pronunciation: 'rooster' },
     ],
   },
   // Animals - Level 2
@@ -31,6 +35,11 @@ export const levels: Level[] = [
       { id: 'tiger', name: 'Tiger', pronunciation: 'tiger' },
       { id: 'bear', name: 'Bear', pronunciation: 'bear' },
       { id: 'monkey', name: 'Monkey', pronunciation: 'monkey' },
+      { id: 'giraffe', name: 'Giraffe', pronunciation: 'giraffe' },
+      { id: 'zebra', name: 'Zebra', pronunciation: 'zebra' },
+      { id: 'wolf', name: 'Wolf', pronunciation: 'wolf' },
+      { id: 'fox', name: 'Fox', pronunciation: 'fox' },
+      { id: 'panda', name: 'Panda', pronunciation: 'panda' },
     ],
   },
   // Letters - Level 1
