@@ -23,6 +23,7 @@ export interface UserProgress {
   completedLevels: string[];
   stars: number;
   badges: string[];
+  levelStars: Record<string, number>; // Store stars earned per level (levelId -> stars)
   currentLevel?: string; // Current level ID being played
   currentLevelIndex?: number; // Current index in the level
   categoryProgress: {

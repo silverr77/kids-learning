@@ -1,9 +1,25 @@
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import { UserProgress } from '@/types';
+import { UserProgress, Category } from '@/types';
 
 const STORAGE_KEYS = {
   PROGRESS: '@learnforkids:progress',
   SETTINGS: '@learnforkids:settings',
+};
+
+export const getDefaultProgress = (): UserProgress => {
+  return {
+    completedLevels: [],
+    stars: 0,
+    badges: [],
+    levelStars: {},
+    categoryProgress: {
+      animals: { completed: 0, total: 2, stars: 0 },
+      letters: { completed: 0, total: 1, stars: 0 },
+      numbers: { completed: 0, total: 1, stars: 0 },
+      colors: { completed: 0, total: 1, stars: 0 },
+      shapes: { completed: 0, total: 1, stars: 0 },
+    },
+  };
 };
 
 export interface AppSettings {
@@ -17,7 +33,15 @@ export interface AppSettings {
 export const getProgress = async (): Promise<UserProgress | null> => {
   try {
     const data = await AsyncStorage.getItem(STORAGE_KEYS.PROGRESS);
-    return data ? JSON.parse(data) : null;
+    if (data) {
+      const progress = JSON.parse(data);
+      // Ensure levelStars exists for backward compatibility
+      if (!progress.levelStars) {
+        progress.levelStars = {};
+      }
+      return progress;
+    }
+    return null;
   } catch (error) {
     console.error('Error getting progress:', error);
     return null;

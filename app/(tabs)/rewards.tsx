@@ -43,6 +43,13 @@ export default function RewardsScreen() {
   };
 
   const calculateBadges = (userProgress: UserProgress) => {
+    // Use stored badges from progress if available
+    if (userProgress.badges && userProgress.badges.length > 0) {
+      setEarnedBadges(userProgress.badges);
+      return;
+    }
+
+    // Fallback: Calculate badges (for backward compatibility)
     const earned: string[] = [];
 
     if (userProgress.stars >= 1) {

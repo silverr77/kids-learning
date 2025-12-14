@@ -127,9 +127,8 @@ export default function LevelOverviewScreen() {
         {/* Levels Grid */}
         <View style={styles.levelsContainer}>
           {levels.map((level) => {
-            const levelStars = progress?.completedLevels.includes(level.id)
-              ? Math.floor(Math.random() * 3) + 1 // In real app, store stars per level
-              : 0;
+            // Get stars from stored progress
+            const levelStars = progress?.levelStars?.[level.id] || 0;
             return (
               <LevelCard
                 key={level.id}

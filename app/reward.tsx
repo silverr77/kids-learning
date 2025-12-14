@@ -44,23 +44,88 @@ export default function RewardScreen() {
   };
 
   const saveLevelProgress = async (level: { category: string }) => {
-    const progress = await getProgress();
-    if (progress && level.category) {
-      const category = level.category as keyof typeof progress.categoryProgress;
-      const updatedProgress = {
+    let progress = await getProgress();
+    
+    // Initialize progress if it doesn't exist
+    if (!progress) {
+      const { getDefaultProgress } = await import('@/utils/storage');
+      progress = getDefaultProgress();
+    }
+
+    if (level.category) {
+      const category = level.category as Category;
+      const wasAlreadyCompleted = progress.completedLevels.includes(levelId);
+      
+      // Only add stars if level wasn't already completed (prevent duplicate stars)
+      const starsToAdd = wasAlreadyCompleted ? 0 : starsEarned;
+      
+      // Update level stars (keep the highest if replayed)
+      const currentLevelStars = progress.levelStars[levelId] || 0;
+      const newLevelStars = Math.max(currentLevelStars, starsEarned);
+      
+      // Calculate new total stars
+      const newTotalStars = progress.stars + starsToAdd;
+      
+      // Calculate badges based on new progress
+      const newBadges = [...new Set(progress.badges)];
+      
+      // First star badge
+      if (newTotalStars >= 1 && !newBadges.includes('first-star')) {
+        newBadges.push('first-star');
+      }
+      
+      // Category completion badges
+      const newCategoryCompleted = wasAlreadyCompleted 
+        ? progress.categoryProgress[category].completed 
+        : progress.categoryProgress[category].completed + 1;
+      
+      if (category === 'animals' && newCategoryCompleted >= 2 && !newBadges.includes('animal-expert')) {
+        newBadges.push('animal-expert');
+      }
+      if (category === 'letters' && newCategoryCompleted >= 1 && !newBadges.includes('letter-master')) {
+        newBadges.push('letter-master');
+      }
+      if (category === 'numbers' && newCategoryCompleted >= 1 && !newBadges.includes('number-whiz')) {
+        newBadges.push('number-whiz');
+      }
+      if (category === 'colors' && newCategoryCompleted >= 1 && !newBadges.includes('color-artist')) {
+        newBadges.push('color-artist');
+      }
+      if (category === 'shapes' && newCategoryCompleted >= 1 && !newBadges.includes('shape-genius')) {
+        newBadges.push('shape-genius');
+      }
+      
+      // Star collector badges
+      if (newTotalStars >= 10 && !newBadges.includes('star-collector')) {
+        newBadges.push('star-collector');
+      }
+      if (newTotalStars >= 25 && !newBadges.includes('super-learner')) {
+        newBadges.push('super-learner');
+      }
+      
+      const updatedProgress: UserProgress = {
         ...progress,
-        completedLevels: [...new Set([...progress.completedLevels, levelId])],
-        stars: progress.stars + starsEarned,
+        completedLevels: wasAlreadyCompleted 
+          ? progress.completedLevels 
+          : [...new Set([...progress.completedLevels, levelId])],
+        stars: newTotalStars,
+        badges: newBadges,
+        levelStars: {
+          ...progress.levelStars,
+          [levelId]: newLevelStars,
+        },
         categoryProgress: {
           ...progress.categoryProgress,
           [category]: {
             ...progress.categoryProgress[category],
-            completed: progress.categoryProgress[category].completed + 1,
-            stars: progress.categoryProgress[category].stars + starsEarned,
+            completed: newCategoryCompleted,
+            stars: progress.categoryProgress[category].stars + starsToAdd,
           },
         },
       };
+      
       await saveProgress(updatedProgress);
+      console.log('Progress saved:', updatedProgress);
     }
   };
 
