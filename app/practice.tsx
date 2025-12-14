@@ -5,12 +5,17 @@ import {
   StyleSheet,
   TouchableOpacity,
   Dimensions,
+  Alert,
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
+import { Ionicons } from '@expo/vector-icons';
 import { useRouter, useLocalSearchParams } from 'expo-router';
 import { Button } from '@/components/Button';
 import { getLevelById } from '@/data/levels';
 import { playSound, playSuccessSound, playErrorSound } from '@/utils/soundManager';
+import { useLanguage } from '@/contexts/LanguageContext';
+import { useTheme } from '@/contexts/ThemeContext';
+import { saveProgress, getProgress } from '@/utils/storage';
 import { LearningItem } from '@/types';
 
 const { width } = Dimensions.get('window');
@@ -19,12 +24,15 @@ export default function PracticeScreen() {
   const router = useRouter();
   const params = useLocalSearchParams<{ levelId: string }>();
   const levelId = params.levelId as string;
+  const { colors } = useTheme();
+  const { t, isRTL } = useLanguage();
   const [items, setItems] = useState<LearningItem[]>([]);
   const [currentQuestion, setCurrentQuestion] = useState(0);
   const [selectedAnswer, setSelectedAnswer] = useState<string | null>(null);
   const [showFeedback, setShowFeedback] = useState(false);
   const [isCorrect, setIsCorrect] = useState(false);
   const [shuffledItems, setShuffledItems] = useState<LearningItem[]>([]);
+  const [levelTitle, setLevelTitle] = useState('');
 
   useEffect(() => {
     loadLevel();
@@ -40,7 +48,38 @@ export default function PracticeScreen() {
     const level = getLevelById(levelId);
     if (level) {
       setItems(level.items);
+      setLevelTitle(level.title);
       generateQuestion();
+    }
+  };
+
+  const handleExit = () => {
+    Alert.alert(
+      t('exit'),
+      'Are you sure you want to exit? Your progress will be saved.',
+      [
+        { text: t('back'), style: 'cancel' },
+        {
+          text: t('exit'),
+          style: 'destructive',
+          onPress: async () => {
+            await saveCurrentProgress();
+            router.back();
+          },
+        },
+      ]
+    );
+  };
+
+  const saveCurrentProgress = async () => {
+    const progress = await getProgress();
+    if (progress && levelId) {
+      const updatedProgress = {
+        ...progress,
+        currentLevel: levelId,
+        currentLevelIndex: currentQuestion,
+      };
+      await saveProgress(updatedProgress);
     }
   };
 
@@ -72,6 +111,8 @@ export default function PracticeScreen() {
         setSelectedAnswer(null);
         generateQuestion();
       } else {
+        // Save progress before moving to challenge
+        saveCurrentProgress();
         // Move to challenge
         router.push({
           pathname: '/challenge',
@@ -86,12 +127,14 @@ export default function PracticeScreen() {
     await playSound(currentItem.sound, currentItem.pronunciation || currentItem.name);
   };
 
+  const styles = createStyles(colors, isRTL);
+
   if (items.length === 0) {
     return (
-      <SafeAreaView style={styles.container}>
+      <SafeAreaView style={[styles.container, { backgroundColor: colors.background }]}>
         <View style={styles.errorContainer}>
-          <Text style={styles.errorText}>Level not found</Text>
-          <Button title="Go Back" onPress={() => router.back()} />
+          <Text style={[styles.errorText, { color: colors.text }]}>Level not found</Text>
+          <Button title={t('back')} onPress={() => router.back()} />
         </View>
       </SafeAreaView>
     );
@@ -101,9 +144,18 @@ export default function PracticeScreen() {
   const progress = ((currentQuestion + 1) / items.length) * 100;
 
   return (
-    <SafeAreaView style={styles.container}>
+    <SafeAreaView style={[styles.container, { backgroundColor: colors.background }]}>
+      {/* Header with Exit Button */}
+      <View style={[styles.header, { backgroundColor: colors.primary }]}>
+        <TouchableOpacity onPress={handleExit} style={styles.exitButton}>
+          <Ionicons name={isRTL ? 'arrow-forward' : 'arrow-back'} size={24} color="#FFFFFF" />
+        </TouchableOpacity>
+        <Text style={styles.headerTitle}>{levelTitle}</Text>
+        <View style={{ width: 40 }} />
+      </View>
+
       {/* Progress */}
-      <View style={styles.progressContainer}>
+      <View style={[styles.progressContainer, { backgroundColor: colors.surface }]}>
         <View style={styles.progressBar}>
           <View style={[styles.progressFill, { width: `${progress}%` }]} />
         </View>
@@ -113,13 +165,15 @@ export default function PracticeScreen() {
       </View>
 
       {/* Question */}
-      <View style={styles.questionContainer}>
-        <Text style={styles.instructionText}>Tap the correct answer!</Text>
+      <View style={[styles.questionContainer, { backgroundColor: colors.surface }]}>
+        <Text style={[styles.instructionText, { color: colors.text }]}>
+          {t('practice')}: {t('question')} {currentQuestion + 1}
+        </Text>
         <TouchableOpacity
-          style={styles.soundButton}
+          style={[styles.soundButton, { backgroundColor: colors.primary }]}
           onPress={handlePlaySound}
         >
-          <Text style={styles.soundIcon}>🔊</Text>
+          <Ionicons name="volume-high" size={40} color="#FFFFFF" />
         </TouchableOpacity>
       </View>
 
@@ -145,7 +199,7 @@ export default function PracticeScreen() {
               onPress={() => handleAnswer(item.id)}
               disabled={showFeedback}
             >
-              {renderItemVisual(item, 80)}
+              {renderItemVisual(item, 80, styles, colors)}
               <Text style={styles.optionText}>{item.name}</Text>
             </TouchableOpacity>
           );
@@ -155,8 +209,8 @@ export default function PracticeScreen() {
       {/* Feedback */}
       {showFeedback && (
         <View style={styles.feedbackContainer}>
-          <Text style={[styles.feedbackText, isCorrect ? styles.correctText : styles.incorrectText]}>
-            {isCorrect ? '🎉 Great job!' : '😊 Try again!'}
+          <Text style={[styles.feedbackText, { color: isCorrect ? colors.success : colors.error }]}>
+            {isCorrect ? t('greatJob') : t('tryAgain')}
           </Text>
         </View>
       )}
@@ -164,8 +218,11 @@ export default function PracticeScreen() {
       {/* Skip Button */}
       <View style={styles.skipContainer}>
         <Button
-          title="Skip to Challenge →"
-          onPress={() => router.push({ pathname: '/challenge', params: { levelId } })}
+          title={isRTL ? `← ${t('challenge')}` : `${t('challenge')} →`}
+          onPress={async () => {
+            await saveCurrentProgress();
+            router.push({ pathname: '/challenge', params: { levelId } });
+          }}
           variant="secondary"
           size="medium"
         />
@@ -174,11 +231,11 @@ export default function PracticeScreen() {
   );
 }
 
-const renderItemVisual = (item: LearningItem, size: number = 100) => {
+const renderItemVisual = (item: LearningItem, size: number = 100, styles: any, colors: any) => {
   if (item.data?.uppercase) {
     return (
-      <View style={[styles.visualContainer, { width: size, height: size }]}>
-        <Text style={[styles.letterPreview, { fontSize: size * 0.6 }]}>
+      <View style={{ width: size, height: size, justifyContent: 'center', alignItems: 'center', marginBottom: 10 }}>
+        <Text style={{ fontSize: size * 0.6, fontWeight: 'bold', color: colors.primary }}>
           {item.data.uppercase}
         </Text>
       </View>
@@ -187,8 +244,8 @@ const renderItemVisual = (item: LearningItem, size: number = 100) => {
 
   if (item.data?.number) {
     return (
-      <View style={[styles.visualContainer, { width: size, height: size }]}>
-        <Text style={[styles.numberPreview, { fontSize: size * 0.6 }]}>
+      <View style={{ width: size, height: size, justifyContent: 'center', alignItems: 'center', marginBottom: 10 }}>
+        <Text style={{ fontSize: size * 0.6, fontWeight: 'bold', color: colors.secondary }}>
           {item.data.number}
         </Text>
       </View>
@@ -198,10 +255,14 @@ const renderItemVisual = (item: LearningItem, size: number = 100) => {
   if (item.data?.color) {
     return (
       <View
-        style={[
-          styles.colorPreview,
-          { width: size, height: size, backgroundColor: item.data.color },
-        ]}
+        style={{
+          width: size,
+          height: size,
+          borderRadius: 50,
+          borderWidth: 3,
+          borderColor: colors.border,
+          backgroundColor: item.data.color,
+        }}
       />
     );
   }
@@ -210,8 +271,7 @@ const renderItemVisual = (item: LearningItem, size: number = 100) => {
     return (
       <View
         style={[
-          styles.shapePreview,
-          { width: size, height: size },
+          { width: size, height: size, justifyContent: 'center', alignItems: 'center' },
           getShapePreviewStyle(item.data.shape, size),
         ]}
       />
@@ -231,7 +291,7 @@ const renderItemVisual = (item: LearningItem, size: number = 100) => {
     monkey: '🐵',
   };
   return (
-    <View style={[styles.visualContainer, { width: size, height: size }]}>
+    <View style={{ width: size, height: size, justifyContent: 'center', alignItems: 'center', marginBottom: 10 }}>
       <Text style={{ fontSize: size * 0.8 }}>{emojiMap[item.id] || '📚'}</Text>
     </View>
   );
@@ -265,92 +325,102 @@ const getShapePreviewStyle = (shape: string, size: number): any => {
   }
 };
 
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: '#F5F5F5',
-  },
-  progressContainer: {
-    padding: 20,
-    backgroundColor: '#FFFFFF',
-  },
-  progressBar: {
-    height: 8,
-    backgroundColor: '#E0E0E0',
-    borderRadius: 4,
-    overflow: 'hidden',
-    marginBottom: 8,
-  },
-  progressFill: {
-    height: '100%',
-    backgroundColor: '#4A90E2',
-    borderRadius: 4,
-  },
-  progressText: {
-    textAlign: 'center',
-    fontSize: 14,
-    color: '#666',
-    fontWeight: '600',
-  },
-  questionContainer: {
-    alignItems: 'center',
-    padding: 30,
-    backgroundColor: '#FFFFFF',
-    marginBottom: 20,
-  },
-  instructionText: {
-    fontSize: 24,
-    fontWeight: 'bold',
-    color: '#333',
-    marginBottom: 20,
-  },
-  soundButton: {
-    width: 80,
-    height: 80,
-    borderRadius: 40,
-    backgroundColor: '#4A90E2',
-    justifyContent: 'center',
-    alignItems: 'center',
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 4 },
-    shadowOpacity: 0.2,
-    shadowRadius: 8,
-    elevation: 5,
-  },
-  soundIcon: {
-    fontSize: 40,
-  },
-  optionsContainer: {
-    flexDirection: 'row',
-    flexWrap: 'wrap',
-    justifyContent: 'center',
-    padding: 15,
-    gap: 15,
-  },
-  optionButton: {
-    width: (width - 60) / 2,
-    backgroundColor: '#FFFFFF',
-    borderRadius: 20,
-    padding: 20,
-    alignItems: 'center',
-    justifyContent: 'center',
-    minHeight: 150,
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.1,
-    shadowRadius: 4,
-    elevation: 3,
-  },
-  correctButton: {
-    backgroundColor: '#2ECC71',
-    borderWidth: 3,
-    borderColor: '#27AE60',
-  },
-  incorrectButton: {
-    backgroundColor: '#E74C3C',
-    borderWidth: 3,
-    borderColor: '#C0392B',
-  },
+function createStyles(colors: any, isRTL: boolean) {
+  return StyleSheet.create({
+    container: {
+      flex: 1,
+    },
+    header: {
+      flexDirection: isRTL ? 'row-reverse' : 'row',
+      alignItems: 'center',
+      justifyContent: 'space-between',
+      paddingHorizontal: 16,
+      paddingVertical: 12,
+    },
+    exitButton: {
+      padding: 8,
+    },
+    headerTitle: {
+      fontSize: 18,
+      fontWeight: 'bold',
+      color: '#FFFFFF',
+      flex: 1,
+      textAlign: 'center',
+    },
+    progressContainer: {
+      padding: 20,
+    },
+    progressBar: {
+      height: 8,
+      backgroundColor: colors.border,
+      borderRadius: 4,
+      overflow: 'hidden',
+      marginBottom: 8,
+    },
+    progressFill: {
+      height: '100%',
+      backgroundColor: colors.primary,
+      borderRadius: 4,
+    },
+    progressText: {
+      textAlign: 'center',
+      fontSize: 14,
+      color: colors.text,
+      fontWeight: '600',
+    },
+    questionContainer: {
+      alignItems: 'center',
+      padding: 30,
+      marginBottom: 20,
+    },
+    instructionText: {
+      fontSize: 24,
+      fontWeight: 'bold',
+      marginBottom: 20,
+    },
+    soundButton: {
+      width: 80,
+      height: 80,
+      borderRadius: 40,
+      justifyContent: 'center',
+      alignItems: 'center',
+      shadowColor: '#000',
+      shadowOffset: { width: 0, height: 4 },
+      shadowOpacity: 0.2,
+      shadowRadius: 8,
+      elevation: 5,
+    },
+    optionsContainer: {
+      flexDirection: 'row',
+      flexWrap: 'wrap',
+      justifyContent: 'center',
+      padding: 15,
+      gap: 15,
+    },
+    optionButton: {
+      width: (width - 60) / 2,
+      backgroundColor: colors.surface,
+      borderRadius: 20,
+      padding: 20,
+      alignItems: 'center',
+      justifyContent: 'center',
+      minHeight: 150,
+      shadowColor: '#000',
+      shadowOffset: { width: 0, height: 2 },
+      shadowOpacity: 0.1,
+      shadowRadius: 4,
+      elevation: 3,
+    },
+    correctButton: {
+      backgroundColor: colors.success,
+      borderWidth: 3,
+      borderColor: colors.success,
+    },
+    incorrectButton: {
+      backgroundColor: colors.error,
+      borderWidth: 3,
+      borderColor: colors.error,
+    },
   visualContainer: {
     justifyContent: 'center',
     alignItems: 'center',
@@ -373,41 +443,35 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
   },
-  optionText: {
-    fontSize: 18,
-    fontWeight: '600',
-    color: '#333',
-    marginTop: 10,
-    textTransform: 'capitalize',
-  },
-  feedbackContainer: {
-    alignItems: 'center',
-    padding: 20,
-  },
-  feedbackText: {
-    fontSize: 28,
-    fontWeight: 'bold',
-  },
-  correctText: {
-    color: '#2ECC71',
-  },
-  incorrectText: {
-    color: '#E74C3C',
-  },
-  skipContainer: {
-    padding: 20,
-    alignItems: 'center',
-  },
-  errorContainer: {
-    flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
-    padding: 20,
-  },
-  errorText: {
-    fontSize: 18,
-    color: '#666',
-    marginBottom: 20,
-  },
-});
+    optionText: {
+      fontSize: 18,
+      fontWeight: '600',
+      color: colors.text,
+      marginTop: 10,
+      textTransform: 'capitalize',
+    },
+    feedbackContainer: {
+      alignItems: 'center',
+      padding: 20,
+    },
+    feedbackText: {
+      fontSize: 28,
+      fontWeight: 'bold',
+    },
+    skipContainer: {
+      padding: 20,
+      alignItems: 'center',
+    },
+    errorContainer: {
+      flex: 1,
+      justifyContent: 'center',
+      alignItems: 'center',
+      padding: 20,
+    },
+    errorText: {
+      fontSize: 18,
+      marginBottom: 20,
+    },
+  });
+}
 

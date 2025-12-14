@@ -6,12 +6,18 @@ import {
   TouchableOpacity,
   Dimensions,
   Animated,
+  Alert,
+  I18nManager,
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
+import { Ionicons } from '@expo/vector-icons';
 import { useRouter, useLocalSearchParams } from 'expo-router';
 import { Button } from '@/components/Button';
 import { getLevelById } from '@/data/levels';
 import { playSound } from '@/utils/soundManager';
+import { useLanguage } from '@/contexts/LanguageContext';
+import { useTheme } from '@/contexts/ThemeContext';
+import { saveProgress, getProgress } from '@/utils/storage';
 import { LearningItem } from '@/types';
 
 const { width } = Dimensions.get('window');
@@ -20,6 +26,8 @@ export default function LearningScreen() {
   const router = useRouter();
   const params = useLocalSearchParams<{ levelId: string }>();
   const levelId = params.levelId as string;
+  const { colors } = useTheme();
+  const { t, isRTL } = useLanguage();
   const [currentIndex, setCurrentIndex] = useState(0);
   const [items, setItems] = useState<LearningItem[]>([]);
   const [levelTitle, setLevelTitle] = useState('');
@@ -49,7 +57,39 @@ export default function LearningScreen() {
     await playSound(item.sound, item.pronunciation || item.name);
   };
 
-  const handleNext = () => {
+  const handleExit = () => {
+    Alert.alert(
+      t('exit'),
+      'Are you sure you want to exit? Your progress will be saved.',
+      [
+        { text: t('back'), style: 'cancel' },
+        {
+          text: t('exit'),
+          style: 'destructive',
+          onPress: async () => {
+            // Save current progress
+            await saveCurrentProgress();
+            router.back();
+          },
+        },
+      ]
+    );
+  };
+
+  const saveCurrentProgress = async () => {
+    const progress = await getProgress();
+    if (progress && levelId) {
+      // Mark level as in progress (not completed, but started)
+      const updatedProgress = {
+        ...progress,
+        currentLevel: levelId,
+        currentLevelIndex: currentIndex,
+      };
+      await saveProgress(updatedProgress);
+    }
+  };
+
+  const handleNext = async () => {
     if (currentIndex < items.length - 1) {
       Animated.timing(slideAnim, {
         toValue: -(currentIndex + 1) * width,
@@ -57,7 +97,11 @@ export default function LearningScreen() {
         useNativeDriver: true,
       }).start();
       setCurrentIndex(currentIndex + 1);
+      // Save progress
+      await saveCurrentProgress();
     } else {
+      // Save progress before moving to practice
+      await saveCurrentProgress();
       // Move to practice screen
       router.push({
         pathname: '/practice',
@@ -83,12 +127,14 @@ export default function LearningScreen() {
     }
   };
 
+  const styles = createStyles(colors, isRTL);
+
   if (items.length === 0) {
     return (
-      <SafeAreaView style={styles.container}>
+      <SafeAreaView style={[styles.container, { backgroundColor: colors.background }]}>
         <View style={styles.errorContainer}>
-          <Text style={styles.errorText}>Level not found</Text>
-          <Button title="Go Back" onPress={() => router.back()} />
+          <Text style={[styles.errorText, { color: colors.text }]}>Level not found</Text>
+          <Button title={t('back')} onPress={() => router.back()} />
         </View>
       </SafeAreaView>
     );
@@ -98,13 +144,22 @@ export default function LearningScreen() {
   const progress = ((currentIndex + 1) / items.length) * 100;
 
   return (
-    <SafeAreaView style={styles.container}>
+    <SafeAreaView style={[styles.container, { backgroundColor: colors.background }]}>
+      {/* Header with Exit Button */}
+      <View style={[styles.header, { backgroundColor: colors.primary }]}>
+        <TouchableOpacity onPress={handleExit} style={styles.exitButton}>
+          <Ionicons name={isRTL ? 'arrow-forward' : 'arrow-back'} size={24} color="#FFFFFF" />
+        </TouchableOpacity>
+        <Text style={styles.headerTitle}>{levelTitle}</Text>
+        <View style={{ width: 40 }} />
+      </View>
+
       {/* Progress Bar */}
       <View style={styles.progressContainer}>
         <View style={styles.progressBar}>
-          <View style={[styles.progressFill, { width: `${progress}%` }]} />
+          <View style={[styles.progressFill, { width: `${progress}%`, backgroundColor: colors.primary }]} />
         </View>
-        <Text style={styles.progressText}>
+        <Text style={[styles.progressText, { color: colors.text }]}>
           {currentIndex + 1} / {items.length}
         </Text>
       </View>
@@ -124,7 +179,7 @@ export default function LearningScreen() {
             <View key={item.id} style={[styles.card, { width }]}>
               {/* Visual Representation */}
               <View style={styles.visualContainer}>
-                {renderItemVisual(item)}
+                {renderItemVisual(item, styles)}
               </View>
 
               {/* Name */}
@@ -132,11 +187,11 @@ export default function LearningScreen() {
 
               {/* Replay Button */}
               <TouchableOpacity
-                style={styles.replayButton}
+                style={[styles.replayButton, { backgroundColor: colors.primary }]}
                 onPress={handleReplaySound}
               >
-                <Text style={styles.replayIcon}>🔊</Text>
-                <Text style={styles.replayText}>Replay</Text>
+                <Ionicons name="volume-high" size={24} color="#FFFFFF" />
+                <Text style={styles.replayText}>{t('replay')}</Text>
               </TouchableOpacity>
             </View>
           ))}
@@ -144,16 +199,16 @@ export default function LearningScreen() {
       </View>
 
       {/* Navigation */}
-      <View style={styles.navigationContainer}>
+      <View style={[styles.navigationContainer, { flexDirection: isRTL ? 'row-reverse' : 'row' }]}>
         <Button
-          title="← Previous"
+          title={isRTL ? `${t('next')} →` : `← ${t('previous')}`}
           onPress={handlePrevious}
           variant="secondary"
           disabled={currentIndex === 0}
           size="medium"
         />
         <Button
-          title={currentIndex === items.length - 1 ? 'Continue →' : 'Next →'}
+          title={currentIndex === items.length - 1 ? t('continue') : isRTL ? `← ${t('next')}` : `${t('next')} →`}
           onPress={handleNext}
           variant="primary"
           size="medium"
@@ -163,7 +218,7 @@ export default function LearningScreen() {
   );
 }
 
-const renderItemVisual = (item: LearningItem) => {
+const renderItemVisual = (item: LearningItem, styles: any) => {
   // For letters
   if (item.data?.uppercase) {
     return (
@@ -249,87 +304,98 @@ const getShapeStyle = (shape: string) => {
   }
 };
 
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: '#F5F5F5',
-  },
-  progressContainer: {
-    padding: 20,
-    backgroundColor: '#FFFFFF',
-  },
-  progressBar: {
-    height: 8,
-    backgroundColor: '#E0E0E0',
-    borderRadius: 4,
-    overflow: 'hidden',
-    marginBottom: 8,
-  },
-  progressFill: {
-    height: '100%',
-    backgroundColor: '#4A90E2',
-    borderRadius: 4,
-  },
-  progressText: {
-    textAlign: 'center',
-    fontSize: 14,
-    color: '#666',
-    fontWeight: '600',
-  },
-  contentContainer: {
-    flex: 1,
-    overflow: 'hidden',
-  },
-  cardsContainer: {
-    flexDirection: 'row',
-  },
-  card: {
-    width: width,
-    flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
-    padding: 30,
-  },
-  visualContainer: {
-    width: '100%',
-    height: 300,
-    justifyContent: 'center',
-    alignItems: 'center',
-    marginBottom: 30,
-  },
-  itemName: {
-    fontSize: 48,
-    fontWeight: 'bold',
-    color: '#333',
-    marginBottom: 20,
-    textTransform: 'capitalize',
-  },
-  replayButton: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    backgroundColor: '#4A90E2',
-    paddingHorizontal: 24,
-    paddingVertical: 12,
-    borderRadius: 25,
-    marginTop: 20,
-  },
-  replayIcon: {
-    fontSize: 24,
-    marginRight: 8,
-  },
-  replayText: {
-    fontSize: 18,
-    fontWeight: '600',
-    color: '#FFFFFF',
-  },
-  navigationContainer: {
-    flexDirection: 'row',
-    justifyContent: 'space-around',
-    padding: 20,
-    backgroundColor: '#FFFFFF',
-    borderTopWidth: 1,
-    borderTopColor: '#E0E0E0',
-  },
+function createStyles(colors: any, isRTL: boolean) {
+  return StyleSheet.create({
+    container: {
+      flex: 1,
+    },
+    header: {
+      flexDirection: isRTL ? 'row-reverse' : 'row',
+      alignItems: 'center',
+      justifyContent: 'space-between',
+      paddingHorizontal: 16,
+      paddingVertical: 12,
+    },
+    exitButton: {
+      padding: 8,
+    },
+    headerTitle: {
+      fontSize: 18,
+      fontWeight: 'bold',
+      color: '#FFFFFF',
+      flex: 1,
+      textAlign: 'center',
+    },
+    progressContainer: {
+      padding: 20,
+      backgroundColor: colors.surface,
+    },
+    progressBar: {
+      height: 8,
+      backgroundColor: colors.border,
+      borderRadius: 4,
+      overflow: 'hidden',
+      marginBottom: 8,
+    },
+    progressFill: {
+      height: '100%',
+      borderRadius: 4,
+    },
+    progressText: {
+      textAlign: 'center',
+      fontSize: 14,
+      fontWeight: '600',
+    },
+    contentContainer: {
+      flex: 1,
+      overflow: 'hidden',
+    },
+    cardsContainer: {
+      flexDirection: 'row',
+    },
+    card: {
+      width: width,
+      flex: 1,
+      justifyContent: 'center',
+      alignItems: 'center',
+      padding: 30,
+    },
+    visualContainer: {
+      width: '100%',
+      height: 300,
+      justifyContent: 'center',
+      alignItems: 'center',
+      marginBottom: 30,
+    },
+    itemName: {
+      fontSize: 48,
+      fontWeight: 'bold',
+      color: colors.text,
+      marginBottom: 20,
+      textTransform: 'capitalize',
+    },
+    replayButton: {
+      flexDirection: isRTL ? 'row-reverse' : 'row',
+      alignItems: 'center',
+      paddingHorizontal: 24,
+      paddingVertical: 12,
+      borderRadius: 25,
+      marginTop: 20,
+      gap: 8,
+    },
+    replayText: {
+      fontSize: 18,
+      fontWeight: '600',
+      color: '#FFFFFF',
+    },
+    navigationContainer: {
+      justifyContent: 'space-around',
+      padding: 20,
+      backgroundColor: colors.surface,
+      borderTopWidth: 1,
+      borderTopColor: colors.border,
+      gap: 12,
+    },
   letterContainer: {
     alignItems: 'center',
   },
@@ -375,19 +441,20 @@ const styles = StyleSheet.create({
   shapeContainer: {
     backgroundColor: '#FF6B6B',
   },
-  emoji: {
-    fontSize: 150,
-  },
-  errorContainer: {
-    flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
-    padding: 20,
-  },
-  errorText: {
-    fontSize: 18,
-    color: '#666',
-    marginBottom: 20,
-  },
-});
+    emoji: {
+      fontSize: 150,
+    },
+    errorContainer: {
+      flex: 1,
+      justifyContent: 'center',
+      alignItems: 'center',
+      padding: 20,
+    },
+    errorText: {
+      fontSize: 18,
+      color: colors.textSecondary,
+      marginBottom: 20,
+    },
+  });
+}
 

@@ -23,6 +23,8 @@ export interface UserProgress {
   completedLevels: string[];
   stars: number;
   badges: string[];
+  currentLevel?: string; // Current level ID being played
+  currentLevelIndex?: number; // Current index in the level
   categoryProgress: {
     [key in Category]: {
       completed: number;
