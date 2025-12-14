@@ -327,6 +327,30 @@ const renderItemVisual = (item: LearningItem, styles: any) => {
         </View>
       );
     }
+    if (item.data.shape === 'crescent') {
+      return (
+        <View style={[styles.shapeContainer, { width: 200, height: 200 }]}>
+          <Svg width="200" height="200" viewBox="0 0 200 200">
+            <Path
+              d="M100,100 m-80,0 a80,80 0 1,0 160,0 a80,80 0 1,0 -160,0 M100,100 m-50,0 a50,50 0 1,1 100,0 a50,50 0 1,1 -100,0"
+              fill="#E74C3C"
+            />
+          </Svg>
+        </View>
+      );
+    }
+    if (item.data.shape === 'arrow') {
+      return (
+        <View style={[styles.shapeContainer, { width: 200, height: 200 }]}>
+          <Svg width="200" height="200" viewBox="0 0 200 200">
+            <Polygon
+              points="100,20 160,80 120,80 120,160 80,160 80,80 40,80"
+              fill="#16A085"
+            />
+          </Svg>
+        </View>
+      );
+    }
     return <View style={[styles.shapeContainer, shapeStyle]} />;
   }
 
@@ -353,6 +377,20 @@ const renderItemVisual = (item: LearningItem, styles: any) => {
     wolf: '🐺',
     fox: '🦊',
     panda: '🐼',
+    // Sea animals
+    fish: '🐟',
+    dolphin: '🐬',
+    whale: '🐋',
+    shark: '🦈',
+    octopus: '🐙',
+    seal: '🦭',
+    // Birds
+    eagle: '🦅',
+    owl: '🦉',
+    parrot: '🦜',
+    penguin: '🐧',
+    flamingo: '🦩',
+    peacock: '🦚',
     // Countries
     france: '🇫🇷',
     usa: '🇺🇸',
@@ -360,6 +398,27 @@ const renderItemVisual = (item: LearningItem, styles: any) => {
     japan: '🇯🇵',
     brazil: '🇧🇷',
     egypt: '🇪🇬',
+    // European countries
+    germany: '🇩🇪',
+    spain: '🇪🇸',
+    italy: '🇮🇹',
+    greece: '🇬🇷',
+    netherlands: '🇳🇱',
+    sweden: '🇸🇪',
+    // Asian countries
+    china: '🇨🇳',
+    india: '🇮🇳',
+    'south-korea': '🇰🇷',
+    thailand: '🇹🇭',
+    singapore: '🇸🇬',
+    indonesia: '🇮🇩',
+    // African countries
+    'south-africa': '🇿🇦',
+    kenya: '🇰🇪',
+    morocco: '🇲🇦',
+    nigeria: '🇳🇬',
+    tanzania: '🇹🇿',
+    ghana: '🇬🇭',
     // Fruits & Vegetables
     apple: '🍎',
     banana: '🍌',
@@ -367,6 +426,27 @@ const renderItemVisual = (item: LearningItem, styles: any) => {
     carrot: '🥕',
     tomato: '🍅',
     broccoli: '🥦',
+    // More fruits
+    strawberry: '🍓',
+    grape: '🍇',
+    watermelon: '🍉',
+    pineapple: '🍍',
+    mango: '🥭',
+    kiwi: '🥝',
+    // More vegetables
+    potato: '🥔',
+    onion: '🧅',
+    pepper: '🫑',
+    cucumber: '🥒',
+    lettuce: '🥬',
+    corn: '🌽',
+    // Mixed fruits & vegetables
+    cherry: '🍒',
+    pear: '🍐',
+    cabbage: '🥬',
+    spinach: '🥬',
+    peas: '🫛',
+    beans: '🫘',
     // Sports
     football: '⚽',
     basketball: '🏀',
@@ -374,6 +454,27 @@ const renderItemVisual = (item: LearningItem, styles: any) => {
     swimming: '🏊',
     cycling: '🚴',
     running: '🏃',
+    // Water sports
+    surfing: '🏄',
+    diving: '🤿',
+    sailing: '⛵',
+    'water-polo': '🤽',
+    rowing: '🚣',
+    kayaking: '🛶',
+    // Winter sports
+    skiing: '⛷️',
+    snowboarding: '🏂',
+    'ice-skating': '⛸️',
+    hockey: '🏒',
+    curling: '🥌',
+    sledding: '🛷',
+    // Team sports
+    volleyball: '🏐',
+    baseball: '⚾',
+    soccer: '⚽',
+    rugby: '🏉',
+    cricket: '🏏',
+    handball: '🤾',
     // Vehicles
     car: '🚗',
     bus: '🚌',
@@ -381,6 +482,27 @@ const renderItemVisual = (item: LearningItem, styles: any) => {
     airplane: '✈️',
     boat: '⛵',
     bicycle: '🚲',
+    // Air vehicles
+    helicopter: '🚁',
+    rocket: '🚀',
+    'hot-air-balloon': '🎈',
+    drone: '🚁',
+    glider: '🪂',
+    jet: '✈️',
+    // Water vehicles
+    ship: '🚢',
+    submarine: '🛸',
+    yacht: '🛥️',
+    ferry: '⛴️',
+    canoe: '🛶',
+    sailboat: '⛵',
+    // Construction vehicles
+    truck: '🚚',
+    bulldozer: '🚜',
+    crane: '🏗️',
+    excavator: '🚜',
+    tractor: '🚜',
+    forklift: '🚜',
   };
   return <Text style={styles.emoji}>{emojiMap[item.id] || '📚'}</Text>;
 };
@@ -421,6 +543,69 @@ const getShapeStyle = (shape: string) => {
       return { width: 200, height: 200, backgroundColor: '#3498DB' };
     case 'pentagon':
       return { width: 200, height: 200, backgroundColor: '#F39C12' };
+    case 'trapezoid':
+      return {
+        width: 200,
+        height: 150,
+        backgroundColor: '#9B59B6',
+        borderTopWidth: 0,
+        borderBottomWidth: 0,
+        borderLeftWidth: 30,
+        borderRightWidth: 30,
+        borderLeftColor: 'transparent',
+        borderRightColor: 'transparent',
+        borderBottomColor: '#9B59B6',
+      };
+    case 'parallelogram':
+      return {
+        width: 200,
+        height: 150,
+        backgroundColor: '#E67E22',
+        transform: [{ skewX: '-20deg' }],
+      };
+    case 'rhombus':
+      return {
+        width: 200,
+        height: 200,
+        backgroundColor: '#3498DB',
+        transform: [{ rotate: '45deg' }],
+      };
+    case 'crescent':
+      return { width: 200, height: 200, backgroundColor: '#E74C3C' };
+    case 'arrow':
+      return { width: 200, height: 200, backgroundColor: '#16A085' };
+    case 'cube':
+      return { width: 200, height: 200, backgroundColor: '#8E44AD' };
+    case 'sphere':
+      return { borderRadius: 100, width: 200, height: 200, backgroundColor: '#27AE60' };
+    case 'cylinder':
+      return { borderRadius: 20, width: 150, height: 200, backgroundColor: '#D35400' };
+    case 'cone':
+      return {
+        width: 0,
+        height: 0,
+        backgroundColor: 'transparent',
+        borderStyle: 'solid',
+        borderLeftWidth: 100,
+        borderRightWidth: 100,
+        borderBottomWidth: 173,
+        borderLeftColor: 'transparent',
+        borderRightColor: 'transparent',
+        borderBottomColor: '#C0392B',
+      };
+    case 'pyramid':
+      return {
+        width: 0,
+        height: 0,
+        backgroundColor: 'transparent',
+        borderStyle: 'solid',
+        borderLeftWidth: 100,
+        borderRightWidth: 100,
+        borderBottomWidth: 173,
+        borderLeftColor: 'transparent',
+        borderRightColor: 'transparent',
+        borderBottomColor: '#F39C12',
+      };
     default:
       return {};
   }

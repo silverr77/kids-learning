@@ -10,7 +10,8 @@ import { Ionicons } from '@expo/vector-icons';
 import { useTheme } from '@/contexts/ThemeContext';
 import { useLanguage } from '@/contexts/LanguageContext';
 import { getProgress } from '@/utils/storage';
-import { UserProgress } from '@/types';
+import { getLevelsByCategory } from '@/data/levels';
+import { UserProgress, Category } from '@/types';
 
 const badgeConfig = [
   { id: 'first-star', nameKey: 'badgeFirstStar', descKey: 'badgeDescFirstStar', icon: 'star' as keyof typeof Ionicons.glyphMap },
@@ -58,28 +59,39 @@ export default function RewardsScreen() {
     if (userProgress.stars >= 1) {
       earned.push('first-star');
     }
-    if (userProgress.categoryProgress.animals.completed >= 2) {
+    
+    // Get actual level totals for each category
+    const animalsTotal = getLevelsByCategory('animals').length;
+    const numbersTotal = getLevelsByCategory('numbers').length;
+    const colorsTotal = getLevelsByCategory('colors').length;
+    const shapesTotal = getLevelsByCategory('shapes').length;
+    const countriesTotal = getLevelsByCategory('countries').length;
+    const fruitsTotal = getLevelsByCategory('fruits').length;
+    const sportsTotal = getLevelsByCategory('sports').length;
+    const vehiclesTotal = getLevelsByCategory('vehicles').length;
+    
+    if (userProgress.categoryProgress.animals.completed >= animalsTotal) {
       earned.push('animal-expert');
     }
-    if (userProgress.categoryProgress.numbers.completed >= 1) {
+    if (userProgress.categoryProgress.numbers.completed >= numbersTotal) {
       earned.push('number-whiz');
     }
-    if (userProgress.categoryProgress.colors.completed >= 1) {
+    if (userProgress.categoryProgress.colors.completed >= colorsTotal) {
       earned.push('color-artist');
     }
-    if (userProgress.categoryProgress.shapes.completed >= 1) {
+    if (userProgress.categoryProgress.shapes.completed >= shapesTotal) {
       earned.push('shape-genius');
     }
-    if (userProgress.categoryProgress.countries.completed >= 1) {
+    if (userProgress.categoryProgress.countries.completed >= countriesTotal) {
       earned.push('country-explorer');
     }
-    if (userProgress.categoryProgress.fruits.completed >= 1) {
+    if (userProgress.categoryProgress.fruits.completed >= fruitsTotal) {
       earned.push('fruit-master');
     }
-    if (userProgress.categoryProgress.sports.completed >= 1) {
+    if (userProgress.categoryProgress.sports.completed >= sportsTotal) {
       earned.push('sport-champion');
     }
-    if (userProgress.categoryProgress.vehicles.completed >= 1) {
+    if (userProgress.categoryProgress.vehicles.completed >= vehiclesTotal) {
       earned.push('vehicle-driver');
     }
     if (userProgress.stars >= 10) {

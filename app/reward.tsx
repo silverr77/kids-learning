@@ -8,11 +8,12 @@ import {
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useRouter, useLocalSearchParams } from 'expo-router';
 import { Button } from '@/components/Button';
-import { getLevelById } from '@/data/levels';
+import { getLevelById, getLevelsByCategory } from '@/data/levels';
 import { getProgress, saveProgress } from '@/utils/storage';
 import { getLevelTitle } from '@/utils/translations';
 import { useLanguage } from '@/contexts/LanguageContext';
 import { playSuccessSound } from '@/utils/soundManager';
+import { Category } from '@/types';
 
 export default function RewardScreen() {
   const router = useRouter();
@@ -79,28 +80,31 @@ export default function RewardScreen() {
         ? progress.categoryProgress[category].completed 
         : progress.categoryProgress[category].completed + 1;
       
-      if (category === 'animals' && newCategoryCompleted >= 2 && !newBadges.includes('animal-expert')) {
+      // Get actual level totals for each category
+      const categoryTotal = getLevelsByCategory(category as Category).length;
+      
+      if (category === 'animals' && newCategoryCompleted >= categoryTotal && !newBadges.includes('animal-expert')) {
         newBadges.push('animal-expert');
       }
-      if (category === 'numbers' && newCategoryCompleted >= 1 && !newBadges.includes('number-whiz')) {
+      if (category === 'numbers' && newCategoryCompleted >= categoryTotal && !newBadges.includes('number-whiz')) {
         newBadges.push('number-whiz');
       }
-      if (category === 'colors' && newCategoryCompleted >= 1 && !newBadges.includes('color-artist')) {
+      if (category === 'colors' && newCategoryCompleted >= categoryTotal && !newBadges.includes('color-artist')) {
         newBadges.push('color-artist');
       }
-      if (category === 'shapes' && newCategoryCompleted >= 1 && !newBadges.includes('shape-genius')) {
+      if (category === 'shapes' && newCategoryCompleted >= categoryTotal && !newBadges.includes('shape-genius')) {
         newBadges.push('shape-genius');
       }
-      if (category === 'countries' && newCategoryCompleted >= 1 && !newBadges.includes('country-explorer')) {
+      if (category === 'countries' && newCategoryCompleted >= categoryTotal && !newBadges.includes('country-explorer')) {
         newBadges.push('country-explorer');
       }
-      if (category === 'fruits' && newCategoryCompleted >= 1 && !newBadges.includes('fruit-master')) {
+      if (category === 'fruits' && newCategoryCompleted >= categoryTotal && !newBadges.includes('fruit-master')) {
         newBadges.push('fruit-master');
       }
-      if (category === 'sports' && newCategoryCompleted >= 1 && !newBadges.includes('sport-champion')) {
+      if (category === 'sports' && newCategoryCompleted >= categoryTotal && !newBadges.includes('sport-champion')) {
         newBadges.push('sport-champion');
       }
-      if (category === 'vehicles' && newCategoryCompleted >= 1 && !newBadges.includes('vehicle-driver')) {
+      if (category === 'vehicles' && newCategoryCompleted >= categoryTotal && !newBadges.includes('vehicle-driver')) {
         newBadges.push('vehicle-driver');
       }
       

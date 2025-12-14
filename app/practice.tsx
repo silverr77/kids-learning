@@ -339,6 +339,20 @@ const renderItemVisual = (item: LearningItem, size: number = 100, styles: any, c
     wolf: '🐺',
     fox: '🦊',
     panda: '🐼',
+    // Sea animals
+    fish: '🐟',
+    dolphin: '🐬',
+    whale: '🐋',
+    shark: '🦈',
+    octopus: '🐙',
+    seal: '🦭',
+    // Birds
+    eagle: '🦅',
+    owl: '🦉',
+    parrot: '🦜',
+    penguin: '🐧',
+    flamingo: '🦩',
+    peacock: '🦚',
     // Countries
     france: '🇫🇷',
     usa: '🇺🇸',
@@ -346,6 +360,27 @@ const renderItemVisual = (item: LearningItem, size: number = 100, styles: any, c
     japan: '🇯🇵',
     brazil: '🇧🇷',
     egypt: '🇪🇬',
+    // European countries
+    germany: '🇩🇪',
+    spain: '🇪🇸',
+    italy: '🇮🇹',
+    greece: '🇬🇷',
+    netherlands: '🇳🇱',
+    sweden: '🇸🇪',
+    // Asian countries
+    china: '🇨🇳',
+    india: '🇮🇳',
+    'south-korea': '🇰🇷',
+    thailand: '🇹🇭',
+    singapore: '🇸🇬',
+    indonesia: '🇮🇩',
+    // African countries
+    'south-africa': '🇿🇦',
+    kenya: '🇰🇪',
+    morocco: '🇲🇦',
+    nigeria: '🇳🇬',
+    tanzania: '🇹🇿',
+    ghana: '🇬🇭',
     // Fruits & Vegetables
     apple: '🍎',
     banana: '🍌',
@@ -353,6 +388,27 @@ const renderItemVisual = (item: LearningItem, size: number = 100, styles: any, c
     carrot: '🥕',
     tomato: '🍅',
     broccoli: '🥦',
+    // More fruits
+    strawberry: '🍓',
+    grape: '🍇',
+    watermelon: '🍉',
+    pineapple: '🍍',
+    mango: '🥭',
+    kiwi: '🥝',
+    // More vegetables
+    potato: '🥔',
+    onion: '🧅',
+    pepper: '🫑',
+    cucumber: '🥒',
+    lettuce: '🥬',
+    corn: '🌽',
+    // Mixed fruits & vegetables
+    cherry: '🍒',
+    pear: '🍐',
+    cabbage: '🥬',
+    spinach: '🥬',
+    peas: '🫛',
+    beans: '🫘',
     // Sports
     football: '⚽',
     basketball: '🏀',
@@ -360,6 +416,27 @@ const renderItemVisual = (item: LearningItem, size: number = 100, styles: any, c
     swimming: '🏊',
     cycling: '🚴',
     running: '🏃',
+    // Water sports
+    surfing: '🏄',
+    diving: '🤿',
+    sailing: '⛵',
+    'water-polo': '🤽',
+    rowing: '🚣',
+    kayaking: '🛶',
+    // Winter sports
+    skiing: '⛷️',
+    snowboarding: '🏂',
+    'ice-skating': '⛸️',
+    hockey: '🏒',
+    curling: '🥌',
+    sledding: '🛷',
+    // Team sports
+    volleyball: '🏐',
+    baseball: '⚾',
+    soccer: '⚽',
+    rugby: '🏉',
+    cricket: '🏏',
+    handball: '🤾',
     // Vehicles
     car: '🚗',
     bus: '🚌',
@@ -367,6 +444,27 @@ const renderItemVisual = (item: LearningItem, size: number = 100, styles: any, c
     airplane: '✈️',
     boat: '⛵',
     bicycle: '🚲',
+    // Air vehicles
+    helicopter: '🚁',
+    rocket: '🚀',
+    'hot-air-balloon': '🎈',
+    drone: '🚁',
+    glider: '🪂',
+    jet: '✈️',
+    // Water vehicles
+    ship: '🚢',
+    submarine: '🛸',
+    yacht: '🛥️',
+    ferry: '⛴️',
+    canoe: '🛶',
+    sailboat: '⛵',
+    // Construction vehicles
+    truck: '🚚',
+    bulldozer: '🚜',
+    crane: '🏗️',
+    excavator: '🚜',
+    tractor: '🚜',
+    forklift: '🚜',
   };
   return (
     <View style={{ width: size, height: size, justifyContent: 'center', alignItems: 'center', marginBottom: 10 }}>
@@ -448,6 +546,66 @@ const getShapePreviewStyle = (shape: string, size: number): any => {
             />
           </Svg>
         ),
+      };
+    case 'trapezoid':
+      return { backgroundColor: '#9B59B6', width: size * 1.2, height: size * 0.8 };
+    case 'parallelogram':
+      return { backgroundColor: '#E67E22', width: size * 1.2, height: size * 0.8, transform: [{ skewX: '-20deg' }] };
+    case 'rhombus':
+      return { backgroundColor: '#3498DB', width: size, height: size, transform: [{ rotate: '45deg' }] };
+    case 'crescent':
+      return {
+        svg: (
+          <Svg width={size} height={size} viewBox="0 0 200 200">
+            <Path
+              d="M100,100 m-80,0 a80,80 0 1,0 160,0 a80,80 0 1,0 -160,0 M100,100 m-50,0 a50,50 0 1,1 100,0 a50,50 0 1,1 -100,0"
+              fill="#E74C3C"
+            />
+          </Svg>
+        ),
+      };
+    case 'arrow':
+      return {
+        svg: (
+          <Svg width={size} height={size} viewBox="0 0 200 200">
+            <Polygon
+              points="100,20 160,80 120,80 120,160 80,160 80,80 40,80"
+              fill="#16A085"
+            />
+          </Svg>
+        ),
+      };
+    case 'cube':
+      return { backgroundColor: '#8E44AD', width: size, height: size };
+    case 'sphere':
+      return { borderRadius: size / 2, backgroundColor: '#27AE60', width: size, height: size };
+    case 'cylinder':
+      return { borderRadius: size / 4, backgroundColor: '#D35400', width: size * 0.75, height: size };
+    case 'cone':
+      return {
+        width: 0,
+        height: 0,
+        backgroundColor: 'transparent',
+        borderStyle: 'solid' as const,
+        borderLeftWidth: size / 2,
+        borderRightWidth: size / 2,
+        borderBottomWidth: size * 0.87,
+        borderLeftColor: 'transparent',
+        borderRightColor: 'transparent',
+        borderBottomColor: '#C0392B',
+      };
+    case 'pyramid':
+      return {
+        width: 0,
+        height: 0,
+        backgroundColor: 'transparent',
+        borderStyle: 'solid' as const,
+        borderLeftWidth: size / 2,
+        borderRightWidth: size / 2,
+        borderBottomWidth: size * 0.87,
+        borderLeftColor: 'transparent',
+        borderRightColor: 'transparent',
+        borderBottomColor: '#F39C12',
       };
     default:
       return { backgroundColor: '#95A5A6', width: size, height: size };

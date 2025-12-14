@@ -62,13 +62,15 @@ export default function CategoriesScreen() {
         <View style={styles.categoriesGrid}>
           {categories.map((cat) => {
             const categoryLevels = getLevelsByCategory(cat.category);
+            const actualTotal = categoryLevels.length;
             const categoryProgress = progress?.categoryProgress[cat.category] || {
               completed: 0,
-              total: categoryLevels.length,
+              total: actualTotal,
               stars: 0,
             };
-            const progressPercent = categoryProgress.total > 0
-              ? (categoryProgress.completed / categoryProgress.total) * 100
+            // Always use the actual total from levels data, not the stored total
+            const progressPercent = actualTotal > 0
+              ? (categoryProgress.completed / actualTotal) * 100
               : 0;
 
             return (
@@ -87,7 +89,7 @@ export default function CategoriesScreen() {
                       {t(cat.category)}
                     </Text>
                     <Text style={[styles.categorySubtitle, { color: colors.textSecondary }]}>
-                      {categoryProgress.completed} / {categoryProgress.total} {t('completed')}
+                      {categoryProgress.completed} / {actualTotal} {t('completed')}
                     </Text>
                   </View>
                   <View style={styles.starsContainer}>
