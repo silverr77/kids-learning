@@ -7,6 +7,7 @@ const levelTitleTranslations: Record<string, Record<Language, string>> = {
   'letters-1': { en: 'Letters A-E', fr: 'Lettres A-E', ar: 'الحروف أ-ه' },
   'numbers-1': { en: 'Numbers 1-5', fr: 'Nombres 1-5', ar: 'الأرقام 1-5' },
   'colors-1': { en: 'Basic Colors', fr: 'Couleurs de base', ar: 'الألوان الأساسية' },
+  'colors-2': { en: 'More Colors', fr: 'Plus de couleurs', ar: 'المزيد من الألوان' },
   'shapes-1': { en: 'Basic Shapes', fr: 'Formes de base', ar: 'الأشكال الأساسية' },
 };
 
@@ -38,12 +39,19 @@ const itemNameTranslations: Record<string, Record<Language, string>> = {
   'wolf': { en: 'Wolf', fr: 'Loup', ar: 'ذئب' },
   'fox': { en: 'Fox', fr: 'Renard', ar: 'ثعلب' },
   'panda': { en: 'Panda', fr: 'Panda', ar: 'باندا' },
-  // Colors
+  // Colors - Basic
   'red': { en: 'Red', fr: 'Rouge', ar: 'أحمر' },
   'blue': { en: 'Blue', fr: 'Bleu', ar: 'أزرق' },
   'yellow': { en: 'Yellow', fr: 'Jaune', ar: 'أصفر' },
   'green': { en: 'Green', fr: 'Vert', ar: 'أخضر' },
   'orange': { en: 'Orange', fr: 'Orange', ar: 'برتقالي' },
+  // Colors - More
+  'purple': { en: 'Purple', fr: 'Violet', ar: 'بنفسجي' },
+  'pink': { en: 'Pink', fr: 'Rose', ar: 'وردي' },
+  'brown': { en: 'Brown', fr: 'Marron', ar: 'بني' },
+  'black': { en: 'Black', fr: 'Noir', ar: 'أسود' },
+  'white': { en: 'White', fr: 'Blanc', ar: 'أبيض' },
+  'gray': { en: 'Gray', fr: 'Gris', ar: 'رمادي' },
   // Shapes
   'circle': { en: 'Circle', fr: 'Cercle', ar: 'دائرة' },
   'square': { en: 'Square', fr: 'Carré', ar: 'مربع' },

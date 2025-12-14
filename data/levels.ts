@@ -120,6 +120,23 @@ export const levels: Level[] = [
       { id: 'orange', name: 'Orange', pronunciation: 'orange', data: { color: '#FFA500' } },
     ],
   },
+  // Colors - Level 2
+  {
+    id: 'colors-2',
+    category: 'colors',
+    levelNumber: 2,
+    title: 'More Colors',
+    requiredStars: 3,
+    unlocked: false,
+    items: [
+      { id: 'purple', name: 'Purple', pronunciation: 'purple', data: { color: '#800080' } },
+      { id: 'pink', name: 'Pink', pronunciation: 'pink', data: { color: '#FFC0CB' } },
+      { id: 'brown', name: 'Brown', pronunciation: 'brown', data: { color: '#A52A2A' } },
+      { id: 'black', name: 'Black', pronunciation: 'black', data: { color: '#000000' } },
+      { id: 'white', name: 'White', pronunciation: 'white', data: { color: '#FFFFFF' } },
+      { id: 'gray', name: 'Gray', pronunciation: 'gray', data: { color: '#808080' } },
+    ],
+  },
   // Shapes - Level 1
   {
     id: 'shapes-1',

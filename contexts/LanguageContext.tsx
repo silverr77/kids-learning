@@ -1,7 +1,7 @@
 import React, { createContext, useContext, useState, useEffect } from 'react';
 import { getSettings, saveSettings } from '@/utils/storage';
 
-type Language = 'en' | 'fr' | 'ar';
+export type Language = 'en' | 'fr' | 'ar';
 
 interface Translations {
   [key: string]: {
@@ -119,12 +119,19 @@ const translations: Translations = {
   wolf: { en: 'Wolf', fr: 'Loup', ar: 'ذئب' },
   fox: { en: 'Fox', fr: 'Renard', ar: 'ثعلب' },
   panda: { en: 'Panda', fr: 'Panda', ar: 'باندا' },
-  // Item names - Colors
+  // Item names - Colors (Basic)
   red: { en: 'Red', fr: 'Rouge', ar: 'أحمر' },
   blue: { en: 'Blue', fr: 'Bleu', ar: 'أزرق' },
   yellow: { en: 'Yellow', fr: 'Jaune', ar: 'أصفر' },
   green: { en: 'Green', fr: 'Vert', ar: 'أخضر' },
   orange: { en: 'Orange', fr: 'Orange', ar: 'برتقالي' },
+  // Item names - Colors (More)
+  purple: { en: 'Purple', fr: 'Violet', ar: 'بنفسجي' },
+  pink: { en: 'Pink', fr: 'Rose', ar: 'وردي' },
+  brown: { en: 'Brown', fr: 'Marron', ar: 'بني' },
+  black: { en: 'Black', fr: 'Noir', ar: 'أسود' },
+  white: { en: 'White', fr: 'Blanc', ar: 'أبيض' },
+  gray: { en: 'Gray', fr: 'Gris', ar: 'رمادي' },
   // Item names - Shapes
   circle: { en: 'Circle', fr: 'Cercle', ar: 'دائرة' },
   square: { en: 'Square', fr: 'Carré', ar: 'مربع' },
