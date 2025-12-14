@@ -10,6 +10,8 @@ interface LevelCardProps {
   stars?: number;
   onPress: () => void;
   isRTL?: boolean;
+  backgroundColor?: string;
+  borderColor?: string;
 }
 
 export const LevelCard: React.FC<LevelCardProps> = ({
@@ -19,12 +21,18 @@ export const LevelCard: React.FC<LevelCardProps> = ({
   stars = 0,
   onPress,
   isRTL = false,
+  backgroundColor = '#FFFFFF',
+  borderColor = '#E5E5EA',
 }) => {
   const { t } = useLanguage();
   
   return (
     <TouchableOpacity
-      style={[styles.card, !unlocked && styles.lockedCard]}
+      style={[
+        styles.card,
+        { backgroundColor: unlocked ? backgroundColor : '#E0E0E0', borderColor: borderColor + '40' },
+        !unlocked && styles.lockedCard
+      ]}
       onPress={unlocked ? onPress : undefined}
       activeOpacity={unlocked ? 0.7 : 1}
       disabled={!unlocked}
@@ -56,14 +64,15 @@ export const LevelCard: React.FC<LevelCardProps> = ({
 
 const styles = StyleSheet.create({
   card: {
-    backgroundColor: '#FFFFFF',
     borderRadius: 16,
     padding: 20,
-    margin: 10,
-    minWidth: 140,
+    width: '48%',
+    marginHorizontal: '1%',
+    marginBottom: 16,
     minHeight: 140,
     justifyContent: 'center',
     alignItems: 'center',
+    borderWidth: 2,
     shadowColor: '#000',
     shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.1,

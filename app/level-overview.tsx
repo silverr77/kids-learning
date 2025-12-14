@@ -17,17 +17,6 @@ import { useLanguage } from '@/contexts/LanguageContext';
 import { useTheme } from '@/contexts/ThemeContext';
 import { Category, Level, UserProgress } from '@/types';
 
-const categoryInfo: Record<Category, { title: string; icon: string }> = {
-  animals: { title: 'Animals', icon: '🐶' },
-  numbers: { title: 'Numbers', icon: '🔢' },
-  colors: { title: 'Colors', icon: '🎨' },
-  shapes: { title: 'Shapes', icon: '🔺' },
-  countries: { title: 'Countries', icon: '🌍' },
-  fruits: { title: 'Fruits & Vegetables', icon: '🥕' },
-  sports: { title: 'Sports', icon: '⚽' },
-  vehicles: { title: 'Vehicles', icon: '🚗' },
-};
-
 export default function LevelOverviewScreen() {
   const router = useRouter();
   const params = useLocalSearchParams<{ category: Category }>();
@@ -71,20 +60,6 @@ export default function LevelOverviewScreen() {
     router.back();
   };
 
-  const getCategoryIcon = (cat: Category): keyof typeof Ionicons.glyphMap => {
-    const icons: Record<Category, keyof typeof Ionicons.glyphMap> = {
-      animals: 'paw',
-      numbers: 'calculator',
-      colors: 'color-palette',
-      shapes: 'shapes',
-      countries: 'globe',
-      fruits: 'nutrition',
-      sports: 'football',
-      vehicles: 'car',
-    };
-    return icons[cat] || 'library';
-  };
-
   const getCategoryColor = (cat: Category): string => {
     const colors: Record<Category, string> = {
       animals: '#FF6B6B',
@@ -103,6 +78,30 @@ export default function LevelOverviewScreen() {
     return t(cat);
   };
 
+  const getLevelColors = (cat: Category, levelNumber: number): { backgroundColor: string; borderColor: string } => {
+    // Define color palettes for each category
+    const colorPalettes: Record<Category, string[]> = {
+      animals: ['#FFE5E5', '#FFD4D4', '#FFC4C4', '#FFB3B3'], // Light reds
+      numbers: ['#E3F2FD', '#BBDEFB', '#90CAF9', '#64B5F6'], // Light blues
+      colors: ['#FFF3E0', '#FFE0B2', '#FFCC80', '#FFB74D'], // Light oranges
+      shapes: ['#E0F2F1', '#B2DFDB', '#80CBC4', '#4DB6AC'], // Light teals
+      countries: ['#E8EAF6', '#C5CAE9', '#9FA8DA', '#7986CB'], // Light purples
+      fruits: ['#E8F5E9', '#C8E6C9', '#A5D6A7', '#81C784'], // Light greens
+      sports: ['#F3E5F5', '#E1BEE7', '#CE93D8', '#BA68C8'], // Light purples
+      vehicles: ['#FFF8E1', '#FFECB3', '#FFE082', '#FFD54F'], // Light yellows
+    };
+
+    const palette = colorPalettes[cat] || colorPalettes.animals;
+    const colorIndex = (levelNumber - 1) % palette.length;
+    const bgColor = palette[colorIndex];
+    const borderColor = getCategoryColor(cat);
+
+    return {
+      backgroundColor: bgColor,
+      borderColor: borderColor,
+    };
+  };
+
   const styles = createStyles(colors, isRTL);
 
   return (
@@ -112,18 +111,9 @@ export default function LevelOverviewScreen() {
         <TouchableOpacity onPress={handleBack} style={styles.backButton}>
           <Ionicons name={isRTL ? 'arrow-forward' : 'arrow-back'} size={24} color="#FFFFFF" />
         </TouchableOpacity>
-        <View style={styles.headerContent}>
-          <View style={[styles.categoryIconContainer, { backgroundColor: getCategoryColor(category) + '20' }]}>
-            <Ionicons 
-              name={getCategoryIcon(category)} 
-              size={40} 
-              color={getCategoryColor(category)} 
-            />
-          </View>
-          <View style={styles.headerTextContainer}>
-            <Text style={styles.categoryTitle}>{getCategoryTitle(category)}</Text>
-            <Text style={styles.subtitle}>{t('chooseLevel')}</Text>
-          </View>
+        <View style={styles.headerTextContainer}>
+          <Text style={styles.categoryTitle}>{getCategoryTitle(category)}</Text>
+          <Text style={styles.subtitle}>{t('chooseLevel')}</Text>
         </View>
         <View style={{ width: 40 }} />
       </View>
@@ -138,6 +128,8 @@ export default function LevelOverviewScreen() {
           {levels.map((level) => {
             // Get stars from stored progress
             const levelStars = progress?.levelStars?.[level.id] || 0;
+            // Get background color for this level
+            const levelColors = getLevelColors(category, level.levelNumber);
             return (
               <LevelCard
                 key={level.id}
@@ -147,6 +139,8 @@ export default function LevelOverviewScreen() {
                 stars={levelStars}
                 onPress={() => handleLevelPress(level.id)}
                 isRTL={isRTL}
+                backgroundColor={levelColors.backgroundColor}
+                borderColor={levelColors.borderColor}
               />
             );
           })}
@@ -174,21 +168,6 @@ function createStyles(colors: any, isRTL: boolean) {
     backButton: {
       padding: 8,
     },
-    headerContent: {
-      flexDirection: isRTL ? 'row-reverse' : 'row',
-      alignItems: 'center',
-      flex: 1,
-      justifyContent: 'center',
-    },
-    categoryIconContainer: {
-      width: 80,
-      height: 80,
-      borderRadius: 40,
-      justifyContent: 'center',
-      alignItems: 'center',
-      marginRight: isRTL ? 0 : 16,
-      marginLeft: isRTL ? 16 : 0,
-    },
     headerTextContainer: {
       flex: 1,
     },
@@ -197,23 +176,22 @@ function createStyles(colors: any, isRTL: boolean) {
       fontWeight: 'bold',
       color: '#FFFFFF',
       marginBottom: 4,
-      textAlign: isRTL ? 'right' : 'left',
+      textAlign: 'center',
     },
     subtitle: {
       fontSize: 16,
       color: '#FFFFFF',
       opacity: 0.9,
-      textAlign: isRTL ? 'right' : 'left',
+      textAlign: 'center',
     },
     scrollView: {
       flex: 1,
       paddingTop: 16,
     },
     levelsContainer: {
-      flexDirection: isRTL ? 'row-reverse' : 'row',
+      flexDirection: 'row',
       flexWrap: 'wrap',
-      justifyContent: 'center',
-      padding: 15,
+      paddingHorizontal: 8,
     },
   });
 }
