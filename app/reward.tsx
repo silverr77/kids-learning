@@ -57,6 +57,15 @@ export default function RewardScreen() {
       const category = level.category as Category;
       const wasAlreadyCompleted = progress.completedLevels.includes(levelId);
       
+      // Ensure categoryProgress exists and has the category
+      if (!progress.categoryProgress) {
+        progress.categoryProgress = {};
+      }
+      if (!progress.categoryProgress[category]) {
+        const categoryTotal = getLevelsByCategory(category as Category).length;
+        progress.categoryProgress[category] = { completed: 0, total: categoryTotal, stars: 0 };
+      }
+      
       // Only add stars if level wasn't already completed (prevent duplicate stars)
       const starsToAdd = wasAlreadyCompleted ? 0 : starsEarned;
       

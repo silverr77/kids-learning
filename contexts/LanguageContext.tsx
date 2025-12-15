@@ -92,6 +92,29 @@ const translations: Translations = {
   whichOne: { en: 'Which one is', fr: 'Lequel est', ar: 'أي واحد هو' },
   tapThe: { en: 'Tap the', fr: 'Appuyez sur le', ar: 'اضغط على' },
   chooseLevel: { en: 'Choose a level to start learning!', fr: 'Choisissez un niveau pour commencer!', ar: 'اختر مستوى للبدء!' },
+  // Games
+  games: { en: 'Games', fr: 'Jeux', ar: 'الألعاب' },
+  gamesSubtitle: { en: 'Fun games unlocked with badges!', fr: 'Jeux amusants débloqués avec des badges!', ar: 'ألعاب ممتعة مفتوحة بالشارات!' },
+  gameMemoryMatch: { en: 'Memory Match', fr: 'Jeu de mémoire', ar: 'لعبة الذاكرة' },
+  gameDescMemoryMatch: { en: 'Match pairs of cards', fr: 'Associez des paires de cartes', ar: 'طابق أزواج البطاقات' },
+  gameColorTap: { en: 'Color Tap', fr: 'Tapez la couleur', ar: 'اضغط على اللون' },
+  gameDescColorTap: { en: 'Tap the correct color', fr: 'Appuyez sur la bonne couleur', ar: 'اضغط على اللون الصحيح' },
+  gameNumberSequence: { en: 'Number Sequence', fr: 'Séquence de nombres', ar: 'تسلسل الأرقام' },
+  gameDescNumberSequence: { en: 'Remember and repeat numbers', fr: 'Mémorisez et répétez les nombres', ar: 'تذكر وكرر الأرقام' },
+  unlockWithBadges: { en: 'Unlock with {count} badges', fr: 'Débloquer avec {count} badges', ar: 'فتح بـ {count} شارات' },
+  play: { en: 'Play', fr: 'Jouer', ar: 'لعب' },
+  playAgain: { en: 'Play Again', fr: 'Rejouer', ar: 'اللعب مرة أخرى' },
+  moves: { en: 'Moves', fr: 'Mouvements', ar: 'الحركات' },
+  matched: { en: 'Matched', fr: 'Appariés', ar: 'مطابقة' },
+  gameWon: { en: 'You won in {moves} moves!', fr: 'Vous avez gagné en {moves} mouvements!', ar: 'لقد فزت في {moves} حركة!' },
+  score: { en: 'Score', fr: 'Score', ar: 'النقاط' },
+  time: { en: 'Time', fr: 'Temps', ar: 'الوقت' },
+  tapColor: { en: 'Tap this color:', fr: 'Appuyez sur cette couleur:', ar: 'اضغط على هذا اللون:' },
+  gameOver: { en: 'Game Over', fr: 'Fin du jeu', ar: 'انتهت اللعبة' },
+  finalScore: { en: 'Final Score: {score}', fr: 'Score final: {score}', ar: 'النقاط النهائية: {score}' },
+  watchSequence: { en: 'Watch the sequence', fr: 'Regardez la séquence', ar: 'شاهد التسلسل' },
+  repeatSequence: { en: 'Repeat the sequence', fr: 'Répétez la séquence', ar: 'كرر التسلسل' },
+  sequenceGameOver: { en: 'Level {level} - Score: {score}', fr: 'Niveau {level} - Score: {score}', ar: 'المستوى {level} - النقاط: {score}' },
   youGot: { en: 'You got', fr: 'Vous avez obtenu', ar: 'حصلت على' },
   outOf: { en: 'out of', fr: 'sur', ar: 'من' },
   // Level titles
@@ -151,7 +174,7 @@ const translations: Translations = {
 interface LanguageContextType {
   language: Language;
   setLanguage: (lang: Language) => void;
-  t: (key: string) => string;
+  t: (key: string, params?: Record<string, string | number>) => string;
   isRTL: boolean;
 }
 
@@ -177,8 +200,14 @@ export const LanguageProvider: React.FC<{ children: React.ReactNode }> = ({ chil
     await saveSettings({ ...settings, language: lang });
   };
 
-  const t = (key: string): string => {
-    return translations[key]?.[language] || key;
+  const t = (key: string, params?: Record<string, string | number>): string => {
+    let translation = translations[key]?.[language] || key;
+    if (params) {
+      Object.keys(params).forEach((param) => {
+        translation = translation.replace(`{${param}}`, String(params[param]));
+      });
+    }
+    return translation;
   };
 
   const isRTL = language === 'ar';

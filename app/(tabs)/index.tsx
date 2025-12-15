@@ -175,6 +175,13 @@ export default function HomeScreen() {
             <Ionicons name="trophy" size={32} color="#FFFFFF" />
             <Text style={styles.quickActionText}>{t('rewards')}</Text>
           </TouchableOpacity>
+          <TouchableOpacity
+            style={[styles.quickActionButton, { backgroundColor: '#FF6B6B' }]}
+            onPress={() => router.push('/games')}
+          >
+            <Ionicons name="game-controller" size={32} color="#FFFFFF" />
+            <Text style={styles.quickActionText}>{t('games')}</Text>
+          </TouchableOpacity>
         </View>
       </ScrollView>
     </View>
@@ -329,9 +336,11 @@ function createStyles(colors: any, isRTL: boolean) {
     },
     quickActions: {
       flexDirection: isRTL ? 'row-reverse' : 'row',
+      flexWrap: 'wrap',
       justifyContent: 'space-around',
       paddingHorizontal: 16,
       paddingBottom: 20,
+      gap: 12,
     },
     quickActionButton: {
       flex: 1,
