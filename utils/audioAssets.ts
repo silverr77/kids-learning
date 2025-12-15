@@ -247,6 +247,46 @@ const colorAudios: Record<Language, Record<string, number>> = {
   },
 };
 
+// Import all shape audio files
+const shapeAudios: Record<Language, Record<string, number>> = {
+  en: {
+    'circle': require('@/assets/shapes/en/circle.mp3'),
+    'square': require('@/assets/shapes/en/square.mp3'),
+    'triangle': require('@/assets/shapes/en/triangle.mp3'),
+    'rectangle': require('@/assets/shapes/en/rectangle.mp3'),
+    'star': require('@/assets/shapes/en/star.mp3'),
+    'oval': require('@/assets/shapes/en/oval.mp3'),
+    'diamond': require('@/assets/shapes/en/diamond.mp3'),
+    'heart': require('@/assets/shapes/en/heart.mp3'),
+    'hexagon': require('@/assets/shapes/en/hexagon.mp3'),
+    'pentagon': require('@/assets/shapes/en/pentagon.mp3'),
+  },
+  fr: {
+    'circle': require('@/assets/shapes/fr/circle.mp3'),
+    'square': require('@/assets/shapes/fr/square.mp3'),
+    'triangle': require('@/assets/shapes/fr/triangle.mp3'),
+    'rectangle': require('@/assets/shapes/fr/rectangle.mp3'),
+    'star': require('@/assets/shapes/fr/star.mp3'),
+    'oval': require('@/assets/shapes/fr/oval.mp3'),
+    'diamond': require('@/assets/shapes/fr/diamond.mp3'),
+    'heart': require('@/assets/shapes/fr/heart.mp3'),
+    'hexagon': require('@/assets/shapes/fr/hexagon.mp3'),
+    'pentagon': require('@/assets/shapes/fr/pentagon.mp3'),
+  },
+  ar: {
+    'circle': require('@/assets/shapes/ar/circle.mp3'),
+    'square': require('@/assets/shapes/ar/square.mp3'),
+    'triangle': require('@/assets/shapes/ar/triangle.mp3'),
+    'rectangle': require('@/assets/shapes/ar/rectangle.mp3'),
+    'star': require('@/assets/shapes/ar/star.mp3'),
+    'oval': require('@/assets/shapes/ar/oval.mp3'),
+    'diamond': require('@/assets/shapes/ar/diamond.mp3'),
+    'heart': require('@/assets/shapes/ar/heart.mp3'),
+    'hexagon': require('@/assets/shapes/ar/hexagon.mp3'),
+    'pentagon': require('@/assets/shapes/ar/pentagon.mp3'),
+  },
+};
+
 /**
  * Get the audio file for a number item based on language
  * @param itemId - The item ID (e.g., '1', '2', '3')
@@ -278,6 +318,16 @@ export const getColorAudio = (itemId: string, language: Language = 'en'): number
 };
 
 /**
+ * Get the audio file for a shape item based on language
+ * @param itemId - The item ID (e.g., 'circle', 'square', 'triangle')
+ * @param language - The current language ('en', 'fr', 'ar')
+ * @returns The require() result (number) for the audio file, or undefined if not found
+ */
+export const getShapeAudio = (itemId: string, language: Language = 'en'): number | undefined => {
+  return shapeAudios[language]?.[itemId];
+};
+
+/**
  * Get audio file for any learning item based on category and language
  * @param itemId - The item ID
  * @param category - The category (e.g., 'numbers', 'animals', 'colors')
@@ -297,6 +347,9 @@ export const getItemAudio = (
   }
   if (category === 'colors') {
     return getColorAudio(itemId, language);
+  }
+  if (category === 'shapes') {
+    return getShapeAudio(itemId, language);
   }
   // Add other categories here as needed
   return undefined;

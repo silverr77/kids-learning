@@ -55,8 +55,8 @@ export default function ChallengeScreen() {
         // Get language-specific name
         updatedItem.name = getItemName(item.id, language as 'en' | 'fr' | 'ar');
         
-        // For numbers, animals, and colors categories, get language-specific audio
-        if (level.category === 'numbers' || level.category === 'animals' || level.category === 'colors') {
+        // For numbers, animals, colors, and shapes categories, get language-specific audio
+        if (level.category === 'numbers' || level.category === 'animals' || level.category === 'colors' || level.category === 'shapes') {
           const languageAudio = getItemAudio(item.id, level.category, language as 'en' | 'fr' | 'ar');
           if (languageAudio) {
             updatedItem.sound = languageAudio;

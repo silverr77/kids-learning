@@ -130,18 +130,6 @@ const itemNameTranslations: Record<string, Record<Language, string>> = {
   'heart': { en: 'Heart', fr: 'Cœur', ar: 'قلب' },
   'hexagon': { en: 'Hexagon', fr: 'Hexagone', ar: 'سداسي' },
   'pentagon': { en: 'Pentagon', fr: 'Pentagone', ar: 'خماسي' },
-  // Shapes - Advanced
-  'trapezoid': { en: 'Trapezoid', fr: 'Trapèze', ar: 'شبه منحرف' },
-  'parallelogram': { en: 'Parallelogram', fr: 'Parallélogramme', ar: 'متوازي أضلاع' },
-  'rhombus': { en: 'Rhombus', fr: 'Losange', ar: 'معين' },
-  'crescent': { en: 'Crescent', fr: 'Croissant', ar: 'هلال' },
-  'arrow': { en: 'Arrow', fr: 'Flèche', ar: 'سهم' },
-  // Shapes - 3D
-  'cube': { en: 'Cube', fr: 'Cube', ar: 'مكعب' },
-  'sphere': { en: 'Sphere', fr: 'Sphère', ar: 'كرة' },
-  'cylinder': { en: 'Cylinder', fr: 'Cylindre', ar: 'أسطوانة' },
-  'cone': { en: 'Cone', fr: 'Cône', ar: 'مخروط' },
-  'pyramid': { en: 'Pyramid', fr: 'Pyramide', ar: 'هرم' },
   // Countries
   'france': { en: 'France', fr: 'France', ar: 'فرنسا' },
   'usa': { en: 'USA', fr: 'États-Unis', ar: 'الولايات المتحدة' },

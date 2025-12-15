@@ -357,38 +357,6 @@ export const levels: Level[] = [
       { id: 'pentagon', name: 'Pentagon', pronunciation: 'pentagon', data: { shape: 'pentagon' } },
     ],
   },
-  // Shapes - Level 3
-  {
-    id: 'shapes-3',
-    category: 'shapes',
-    levelNumber: 3,
-    title: 'Advanced Shapes',
-    requiredStars: 6,
-    unlocked: false,
-    items: [
-      { id: 'trapezoid', name: 'Trapezoid', pronunciation: 'trapezoid', data: { shape: 'trapezoid' } },
-      { id: 'parallelogram', name: 'Parallelogram', pronunciation: 'parallelogram', data: { shape: 'parallelogram' } },
-      { id: 'rhombus', name: 'Rhombus', pronunciation: 'rhombus', data: { shape: 'rhombus' } },
-      { id: 'crescent', name: 'Crescent', pronunciation: 'crescent', data: { shape: 'crescent' } },
-      { id: 'arrow', name: 'Arrow', pronunciation: 'arrow', data: { shape: 'arrow' } },
-    ],
-  },
-  // Shapes - Level 4
-  {
-    id: 'shapes-4',
-    category: 'shapes',
-    levelNumber: 4,
-    title: '3D Shapes',
-    requiredStars: 9,
-    unlocked: false,
-    items: [
-      { id: 'cube', name: 'Cube', pronunciation: 'cube', data: { shape: 'cube' } },
-      { id: 'sphere', name: 'Sphere', pronunciation: 'sphere', data: { shape: 'sphere' } },
-      { id: 'cylinder', name: 'Cylinder', pronunciation: 'cylinder', data: { shape: 'cylinder' } },
-      { id: 'cone', name: 'Cone', pronunciation: 'cone', data: { shape: 'cone' } },
-      { id: 'pyramid', name: 'Pyramid', pronunciation: 'pyramid', data: { shape: 'pyramid' } },
-    ],
-  },
   // Countries - Level 1
   {
     id: 'countries-1',
