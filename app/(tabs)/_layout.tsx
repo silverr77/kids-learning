@@ -57,6 +57,15 @@ export default function TabsLayout() {
         }}
       />
       <Tabs.Screen
+        name="games"
+        options={{
+          title: t('games'),
+          tabBarIcon: ({ color, size }) => (
+            <TabIcon name="games" color={color} size={size} />
+          ),
+        }}
+      />
+      <Tabs.Screen
         name="settings"
         options={{
           title: t('settings'),
@@ -74,6 +83,7 @@ function TabIcon({ name, color, size }: { name: string; color: string; size: num
     home: 'home',
     categories: 'library',
     rewards: 'trophy',
+    games: 'game-controller',
     settings: 'settings',
   };
   return <Ionicons name={iconMap[name] || 'home'} size={size} color={color} />;

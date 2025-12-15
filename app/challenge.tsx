@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useRef } from 'react';
 import {
   View,
   Text,
@@ -41,9 +41,43 @@ export default function ChallengeScreen() {
   const [canProceed, setCanProceed] = useState(false);
   const [levelTitle, setLevelTitle] = useState('');
 
+  const prevLanguageRef = useRef<string>(language);
+  const skipNextAudioRef = useRef(false);
+  const hasPlayedInitialAudioRef = useRef(false);
+
   useEffect(() => {
+    const isLanguageChange = prevLanguageRef.current !== language;
+    prevLanguageRef.current = language;
+    
+    // Set flag to skip audio if language changed (but not on initial load)
+    if (isLanguageChange) {
+      skipNextAudioRef.current = true;
+      hasPlayedInitialAudioRef.current = false;
+    }
+    
     loadLevel();
   }, [levelId, language]);
+
+  // Auto-play first question audio when questions are loaded
+  useEffect(() => {
+    if (questions.length > 0 && currentQuestion === 0 && !hasPlayedInitialAudioRef.current) {
+      if (!skipNextAudioRef.current) {
+        const question = questions[0];
+        if (question.audio) {
+          if (typeof question.audio === 'number') {
+            playSound(question.audio);
+          } else {
+            playSound(undefined, question.audio);
+          }
+        }
+        hasPlayedInitialAudioRef.current = true;
+      } else {
+        // Reset the flag after skipping once
+        skipNextAudioRef.current = false;
+        hasPlayedInitialAudioRef.current = true;
+      }
+    }
+  }, [questions, currentQuestion]);
 
   const loadLevel = () => {
     const level = getLevelById(levelId);

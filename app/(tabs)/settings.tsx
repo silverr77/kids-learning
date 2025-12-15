@@ -107,25 +107,35 @@ export default function SettingsScreen() {
         <View style={[styles.section, { backgroundColor: colors.surface }]}>
           <Text style={[styles.sectionTitle, { color: colors.text }]}>{t('theme')}</Text>
           <View style={styles.optionsContainer}>
-            {(['light', 'dark', 'system'] as Theme[]).map((themeOption) => (
-              <TouchableOpacity
-                key={themeOption}
-                style={[
-                  styles.optionButton,
-                  theme === themeOption && { backgroundColor: colors.primary },
-                ]}
-                onPress={() => handleThemeChange(themeOption)}
-              >
-                <Text
+            {(['light', 'dark', 'system'] as Theme[]).map((themeOption) => {
+              const isSelected = theme === themeOption;
+              return (
+                <TouchableOpacity
+                  key={themeOption}
                   style={[
-                    styles.optionText,
-                    { color: theme === themeOption ? '#FFFFFF' : colors.text },
+                    styles.optionButton,
+                    isSelected && { 
+                      backgroundColor: colors.primary,
+                      borderColor: colors.primary,
+                    },
+                    !isSelected && {
+                      backgroundColor: '#F0F0F0',
+                      borderColor: 'transparent',
+                    },
                   ]}
+                  onPress={() => handleThemeChange(themeOption)}
                 >
-                  {t(themeOption)}
-                </Text>
-              </TouchableOpacity>
-            ))}
+                  <Text
+                    style={[
+                      styles.optionText,
+                      { color: isSelected ? '#FFFFFF' : colors.text },
+                    ]}
+                  >
+                    {t(themeOption)}
+                  </Text>
+                </TouchableOpacity>
+              );
+            })}
           </View>
         </View>
 
@@ -133,25 +143,35 @@ export default function SettingsScreen() {
         <View style={[styles.section, { backgroundColor: colors.surface }]}>
           <Text style={[styles.sectionTitle, { color: colors.text }]}>{t('language')}</Text>
           <View style={styles.optionsContainer}>
-            {(['en', 'fr', 'ar'] as const).map((lang) => (
-              <TouchableOpacity
-                key={lang}
-                style={[
-                  styles.optionButton,
-                  language === lang && { backgroundColor: colors.primary },
-                ]}
-                onPress={() => handleLanguageChange(lang)}
-              >
-                <Text
+            {(['en', 'fr', 'ar'] as const).map((lang) => {
+              const isSelected = language === lang;
+              return (
+                <TouchableOpacity
+                  key={lang}
                   style={[
-                    styles.optionText,
-                    { color: language === lang ? '#FFFFFF' : colors.text },
+                    styles.optionButton,
+                    isSelected && { 
+                      backgroundColor: colors.primary,
+                      borderColor: colors.primary,
+                    },
+                    !isSelected && {
+                      backgroundColor: '#F0F0F0',
+                      borderColor: 'transparent',
+                    },
                   ]}
+                  onPress={() => handleLanguageChange(lang)}
                 >
-                  {lang === 'en' ? 'English' : lang === 'fr' ? 'Français' : 'العربية'}
-                </Text>
-              </TouchableOpacity>
-            ))}
+                  <Text
+                    style={[
+                      styles.optionText,
+                      { color: isSelected ? '#FFFFFF' : colors.text },
+                    ]}
+                  >
+                    {lang === 'en' ? 'English' : lang === 'fr' ? 'Français' : 'العربية'}
+                  </Text>
+                </TouchableOpacity>
+              );
+            })}
           </View>
         </View>
 
@@ -264,6 +284,8 @@ function createStyles(colors: any, isRTL: boolean) {
       borderRadius: 12,
       backgroundColor: '#F0F0F0',
       alignItems: 'center',
+      borderWidth: 2,
+      borderColor: 'transparent',
     },
     optionText: {
       fontSize: 14,

@@ -35,18 +35,36 @@ export default function LearningScreen() {
   const [items, setItems] = useState<LearningItem[]>([]);
   const [levelTitle, setLevelTitle] = useState('');
   const slideAnim = useRef(new Animated.Value(0)).current;
+  const prevLanguageRef = useRef<string>(language);
+  const skipNextAudioRef = useRef(false);
 
   useEffect(() => {
+    const isLanguageChange = prevLanguageRef.current !== language;
+    prevLanguageRef.current = language;
+    
+    // Set flag to skip audio if language changed (but not on initial load)
+    if (isLanguageChange && items.length > 0) {
+      skipNextAudioRef.current = true;
+    }
+    
     loadLevel();
     slideAnim.setValue(0);
+    // Reset current index when level or language changes
+    setCurrentIndex(0);
   }, [levelId, language]);
 
   useEffect(() => {
-    if (items.length > 0 && currentIndex < items.length) {
-      playItemSound(items[currentIndex]);
+    if (items.length > 0 && currentIndex < items.length && levelId) {
+      // Play sound unless we're skipping due to language change
+      if (!skipNextAudioRef.current) {
+        playItemSound(items[currentIndex]);
+      } else {
+        // Reset the flag after skipping once
+        skipNextAudioRef.current = false;
+      }
       slideAnim.setValue(-currentIndex * width);
     }
-  }, [currentIndex, items]);
+  }, [currentIndex, items, levelId]);
 
   const loadLevel = () => {
     const level = getLevelById(levelId);
