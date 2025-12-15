@@ -142,24 +142,28 @@ export const levels: Level[] = [
         id: '7', 
         name: 'Seven', 
         pronunciation: 'seven', 
+        sound: require('@/assets/numbers/en/7.mp3'),
         data: { number: 7, count: 7 } 
       },
       { 
         id: '8', 
         name: 'Eight', 
         pronunciation: 'eight', 
+        sound: require('@/assets/numbers/en/8.mp3'),
         data: { number: 8, count: 8 } 
       },
       { 
         id: '9', 
         name: 'Nine', 
         pronunciation: 'nine', 
+        sound: require('@/assets/numbers/en/9.mp3'),
         data: { number: 9, count: 9 } 
       },
       { 
         id: '10', 
         name: 'Ten', 
         pronunciation: 'ten', 
+        sound: require('@/assets/numbers/en/10.mp3'),
         data: { number: 10, count: 10 } 
       },
     ],
@@ -177,30 +181,35 @@ export const levels: Level[] = [
         id: '11', 
         name: 'Eleven', 
         pronunciation: 'eleven', 
+        sound: require('@/assets/numbers/en/11.mp3'),
         data: { number: 11, count: 11 } 
       },
       { 
         id: '12', 
         name: 'Twelve', 
         pronunciation: 'twelve', 
+        sound: require('@/assets/numbers/en/12.mp3'),
         data: { number: 12, count: 12 } 
       },
       { 
         id: '13', 
         name: 'Thirteen', 
         pronunciation: 'thirteen', 
+        sound: require('@/assets/numbers/en/13.mp3'),
         data: { number: 13, count: 13 } 
       },
       { 
         id: '14', 
         name: 'Fourteen', 
         pronunciation: 'fourteen', 
+        sound: require('@/assets/numbers/en/14.mp3'),
         data: { number: 14, count: 14 } 
       },
       { 
         id: '15', 
         name: 'Fifteen', 
         pronunciation: 'fifteen', 
+        sound: require('@/assets/numbers/en/15.mp3'),
         data: { number: 15, count: 15 } 
       },
     ],
@@ -218,30 +227,35 @@ export const levels: Level[] = [
         id: '16', 
         name: 'Sixteen', 
         pronunciation: 'sixteen', 
+        sound: require('@/assets/numbers/en/16.mp3'),
         data: { number: 16, count: 16 } 
       },
       { 
         id: '17', 
         name: 'Seventeen', 
         pronunciation: 'seventeen', 
+        sound: require('@/assets/numbers/en/17.mp3'),
         data: { number: 17, count: 17 } 
       },
       { 
         id: '18', 
         name: 'Eighteen', 
         pronunciation: 'eighteen', 
+        sound: require('@/assets/numbers/en/18.mp3'),
         data: { number: 18, count: 18 } 
       },
       { 
         id: '19', 
         name: 'Nineteen', 
         pronunciation: 'nineteen', 
+        sound: require('@/assets/numbers/en/19.mp3'),
         data: { number: 19, count: 19 } 
       },
       { 
         id: '20', 
         name: 'Twenty', 
         pronunciation: 'twenty', 
+        sound: require('@/assets/numbers/en/20.mp3'),
         data: { number: 20, count: 20 } 
       },
     ],
