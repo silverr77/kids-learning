@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import {
   View,
   Text,
@@ -14,6 +14,7 @@ import { Ionicons } from '@expo/vector-icons';
 import { useTheme } from '@/contexts/ThemeContext';
 import { useLanguage } from '@/contexts/LanguageContext';
 import { getSettings, saveSettings, resetProgress, AppSettings } from '@/utils/storage';
+import { setSoundEnabled } from '@/utils/soundManager';
 
 type Theme = 'light' | 'dark' | 'system';
 
@@ -28,9 +29,17 @@ export default function SettingsScreen() {
     screenTimeReminder: true,
     theme: 'system',
   });
+  const languageAudioTimeout = useRef<NodeJS.Timeout | null>(null);
 
   useEffect(() => {
     loadSettings();
+    return () => {
+      if (languageAudioTimeout.current) {
+        clearTimeout(languageAudioTimeout.current);
+      }
+      // Restore user sound preference on unmount
+      setSoundEnabled(settings.soundEnabled);
+    };
   }, []);
 
   const loadSettings = async () => {
@@ -41,6 +50,7 @@ export default function SettingsScreen() {
   const handleToggleSound = async (value: boolean) => {
     const newSettings = { ...settings, soundEnabled: value };
     setSettings(newSettings);
+    setSoundEnabled(value);
     await saveSettings(newSettings);
   };
 
@@ -58,10 +68,20 @@ export default function SettingsScreen() {
   };
 
   const handleLanguageChange = async (lang: 'en' | 'fr' | 'ar') => {
+    // Temporarily mute to avoid autoplay from other screens reacting to language change
+    setSoundEnabled(false);
+    if (languageAudioTimeout.current) {
+      clearTimeout(languageAudioTimeout.current);
+    }
+
     setLanguage(lang);
     const newSettings = { ...settings, language: lang };
     setSettings(newSettings);
     await saveSettings(newSettings);
+
+    languageAudioTimeout.current = setTimeout(() => {
+      setSoundEnabled(newSettings.soundEnabled);
+    }, 400);
   };
 
   const handleResetProgress = () => {
@@ -150,7 +170,7 @@ export default function SettingsScreen() {
                   key={lang}
                   style={[
                     styles.optionButton,
-                    isSelected && { 
+                    isSelected && {
                       backgroundColor: colors.primary,
                       borderColor: colors.primary,
                     },
