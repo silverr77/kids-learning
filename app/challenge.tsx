@@ -104,6 +104,7 @@ export default function ChallengeScreen() {
       setItems(itemsWithAudio);
       // Use translated level title
       setLevelTitle(getLevelTitle(levelId, language as 'en' | 'fr' | 'ar'));
+      // Generate questions with the same items array that will be used for display
       generateQuestions(itemsWithAudio);
     }
   };
@@ -139,6 +140,13 @@ export default function ChallengeScreen() {
   };
 
   const generateQuestions = (levelItems: LearningItem[]) => {
+    // Ensure we have enough items to generate questions
+    if (levelItems.length < 2) {
+      console.warn('Not enough items to generate challenge questions');
+      setQuestions([]);
+      return;
+    }
+
     // Generate 5 random questions
     const questionTypes: Array<'multiple-choice' | 'tap' | 'count'> = [
       'multiple-choice',
@@ -149,12 +157,46 @@ export default function ChallengeScreen() {
     ];
 
     const generatedQuestions: ChallengeQuestion[] = questionTypes.map((type, index) => {
+      // Select a random item as the correct answer
       const randomItem = levelItems[Math.floor(Math.random() * levelItems.length)];
-      const wrongOptions = levelItems
-        .filter(item => item.id !== randomItem.id)
+      
+      // Get wrong options (excluding the correct answer)
+      const availableWrongOptions = levelItems.filter(item => item.id !== randomItem.id);
+      const wrongOptions = availableWrongOptions
         .sort(() => Math.random() - 0.5)
-        .slice(0, 3);
-      const allOptions = [randomItem, ...wrongOptions].sort(() => Math.random() - 0.5);
+        .slice(0, Math.min(3, availableWrongOptions.length));
+      
+      // Ensure the correct answer is always included
+      // Create options array: correct answer + wrong options
+      const allOptions = [randomItem, ...wrongOptions];
+      
+      // Shuffle the options array (but ensure correct answer is always included)
+      const shuffledOptions = [...allOptions].sort(() => Math.random() - 0.5);
+      
+      // Double-check: verify that the correct answer is in the shuffled options
+      const hasCorrectAnswer = shuffledOptions.some(item => item.id === randomItem.id);
+      if (!hasCorrectAnswer) {
+        console.error('Correct answer missing after shuffle! Adding it back.', {
+          correctAnswer: randomItem.id,
+          shuffledOptions: shuffledOptions.map(i => i.id),
+        });
+        // If somehow the correct answer is missing, add it at a random position
+        const randomPosition = Math.floor(Math.random() * shuffledOptions.length);
+        shuffledOptions.splice(randomPosition, 0, randomItem);
+      }
+      
+      // Map to IDs
+      const optionIds = shuffledOptions.map(item => item.id);
+      
+      // Final verification
+      if (!optionIds.includes(randomItem.id)) {
+        console.error('CRITICAL: Correct answer still missing in optionIds!', {
+          correctAnswer: randomItem.id,
+          optionIds,
+        });
+        // Last resort: replace first option with correct answer
+        optionIds[0] = randomItem.id;
+      }
 
       // Use the item's sound (language-specific) if available, otherwise use pronunciation
       const audioSource = randomItem.sound || randomItem.pronunciation || randomItem.name;
@@ -166,12 +208,30 @@ export default function ChallengeScreen() {
           ? `${t('whichOne')} ${randomItem.name}?`
           : `${t('tapThe')} ${randomItem.name}!`,
         correctAnswer: randomItem.id,
-        options: allOptions.map(item => item.id),
+        options: optionIds,
         audio: audioSource,
       };
     });
 
-    setQuestions(generatedQuestions);
+    // Verify all questions have valid options before setting
+    const validQuestions = generatedQuestions.filter(q => {
+      if (!q.options || q.options.length === 0) {
+        console.error('Question has no options:', q);
+        return false;
+      }
+      const hasCorrectAnswer = q.options.includes(String(q.correctAnswer));
+      const hasEnoughOptions = q.options.length >= 2;
+      if (!hasCorrectAnswer || !hasEnoughOptions) {
+        console.error('Invalid question generated:', q);
+      }
+      return hasCorrectAnswer && hasEnoughOptions;
+    });
+
+    if (validQuestions.length !== generatedQuestions.length) {
+      console.warn(`Generated ${generatedQuestions.length} questions but only ${validQuestions.length} are valid`);
+    }
+
+    setQuestions(validQuestions);
   };
 
   const handleAnswer = async (answerId: string) => {
@@ -296,7 +356,14 @@ export default function ChallengeScreen() {
         <View style={styles.optionsContainer}>
           {question.options?.map((optionId) => {
             const optionItem = items.find(item => item.id === optionId);
-            if (!optionItem) return null;
+            if (!optionItem) {
+              console.warn(`Option item not found for ID: ${optionId}`, {
+                availableItems: items.map(i => i.id),
+                questionOptions: question.options,
+                correctAnswer: question.correctAnswer,
+              });
+              return null;
+            }
 
             const isSelected = selectedAnswer === optionId;
             const isCorrectAnswer = optionId === question.correctAnswer;
