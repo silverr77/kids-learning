@@ -14,6 +14,7 @@ import { useTheme } from '@/contexts/ThemeContext';
 import { useLanguage } from '@/contexts/LanguageContext';
 import { getProgress } from '@/utils/storage';
 import { UserProgress } from '@/types';
+import BannerAd from '@/components/BannerAd';
 
 const { width } = Dimensions.get('window');
 
@@ -89,6 +90,9 @@ export default function GamesScreen() {
         showsVerticalScrollIndicator={false}
         contentContainerStyle={{ paddingBottom: 20 + insets.bottom }}
       >
+        {/* Banner Ad (top) */}
+        <BannerAd style={{ marginTop: 12, marginBottom: 16 }} />
+
         {/* Games Grid */}
         <View style={styles.gamesContainer}>
           {gamesConfig.map((game) => {

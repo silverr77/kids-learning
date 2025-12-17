@@ -113,6 +113,8 @@ export default function RewardsScreen() {
         <Text style={styles.headerTitle}>{t('rewards')}</Text>
       </View>
       <ScrollView style={styles.scrollView} showsVerticalScrollIndicator={false} contentContainerStyle={{ paddingBottom: 80 }}>
+        {/* Banner Ad (top) */}
+        <BannerAd style={{ marginTop: 12, marginBottom: 16 }} />
         {/* Stats */}
         {progress && (
           <View style={[styles.statsContainer, { backgroundColor: colors.surface }]}>
@@ -184,8 +186,6 @@ export default function RewardsScreen() {
           </View>
         </View>
 
-        {/* Banner Ad */}
-        <BannerAd style={{ marginTop: 20, marginBottom: 10 }} />
       </ScrollView>
     </View>
   );

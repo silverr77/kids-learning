@@ -60,6 +60,9 @@ export default function CategoriesScreen() {
         <Text style={styles.headerTitle}>{t('categories')}</Text>
       </View>
       <ScrollView style={styles.scrollView} showsVerticalScrollIndicator={false} contentContainerStyle={{ paddingBottom: 80 }}>
+        {/* Banner Ad (top) */}
+        <BannerAd style={{ marginTop: 12, marginBottom: 16 }} />
+
         <View style={styles.categoriesGrid}>
           {categories.map((cat) => {
             const categoryLevels = getLevelsByCategory(cat.category);
@@ -117,8 +120,6 @@ export default function CategoriesScreen() {
           })}
         </View>
 
-        {/* Banner Ad */}
-        <BannerAd style={{ marginTop: 20, marginBottom: 10 }} />
       </ScrollView>
     </View>
   );

@@ -90,6 +90,9 @@ export default function HomeScreen() {
           </View>
         </View>
 
+        {/* Banner Ad (top) */}
+        <BannerAd style={{ marginTop: 12, marginBottom: 16 }} />
+
         {/* Current Level Card */}
         {currentLevel && (
           <View style={[styles.card, { backgroundColor: colors.surface }]}>
@@ -192,8 +195,6 @@ export default function HomeScreen() {
           </TouchableOpacity>
         </View>
 
-        {/* Banner Ad */}
-        <BannerAd style={{ marginTop: 20, marginBottom: 10 }} />
       </ScrollView>
     </View>
   );
