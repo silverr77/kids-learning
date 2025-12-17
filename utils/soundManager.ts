@@ -1,11 +1,35 @@
 import { Audio } from 'expo-av';
 import { getSettings } from './storage';
+import { Platform } from 'react-native';
 
 let soundEnabled = true;
+let audioModeConfigured = false;
 
 export const initializeSoundManager = async () => {
   const settings = await getSettings();
   soundEnabled = settings.soundEnabled;
+  
+  // Configure audio mode for iOS devices (especially important for iPhone 11)
+  await configureAudioMode();
+};
+
+const configureAudioMode = async () => {
+  if (audioModeConfigured) return;
+  
+  try {
+    // Set audio mode to playback - this is critical for iPhone 11 and other iOS devices
+    await Audio.setAudioModeAsync({
+      playsInSilentModeIOS: true, // Play even when device is in silent mode (important for kids apps)
+      staysActiveInBackground: false,
+      shouldDuckAndroid: true,
+      playThroughEarpieceAndroid: false,
+    });
+    audioModeConfigured = true;
+    console.log('Audio mode configured successfully');
+  } catch (error) {
+    console.error('Error configuring audio mode:', error);
+    // Don't block if configuration fails, but log it
+  }
 };
 
 export const setSoundEnabled = (enabled: boolean) => {
@@ -14,6 +38,11 @@ export const setSoundEnabled = (enabled: boolean) => {
 
 export const playSound = async (soundFile?: string | number, textToSpeak?: string): Promise<void> => {
   if (!soundEnabled) return;
+
+  // Ensure audio mode is configured before playing
+  if (!audioModeConfigured) {
+    await configureAudioMode();
+  }
 
   console.log("soundFile", soundFile)
 
@@ -31,24 +60,59 @@ export const playSound = async (soundFile?: string | number, textToSpeak?: strin
         source = { uri: soundFile };
       }
       console.log("source", source)
+      
+      // Configure audio mode again before each play (helps with iPhone 11)
+      if (Platform.OS === 'ios') {
+        try {
+          await Audio.setAudioModeAsync({
+            playsInSilentModeIOS: true,
+            staysActiveInBackground: false,
+            shouldDuckAndroid: true,
+            playThroughEarpieceAndroid: false,
+          });
+        } catch (modeError) {
+          console.log('Audio mode update warning:', modeError);
+        }
+      }
+      
       // load sound before playing
       const { sound } = await Audio.Sound.createAsync(
         source,
-        { shouldPlay: true, volume: 1.0 }
+        { 
+          shouldPlay: true, 
+          volume: 1.0,
+          isMuted: false,
+        }
       );
       
       // Wait for sound to finish before unloading
       await new Promise<void>((resolve) => {
+        let resolved = false;
+        
         sound.setOnPlaybackStatusUpdate((status) => {
-          if (status.isLoaded && status.didJustFinish) {
-            resolve();
+          if (status.isLoaded) {
+            if (status.didJustFinish && !resolved) {
+              resolved = true;
+              resolve();
+            }
+            // Log playback errors
+            if (status.error) {
+              console.error('Audio playback error:', status.error);
+              if (!resolved) {
+                resolved = true;
+                resolve();
+              }
+            }
           }
         });
         
-        // Fallback timeout
+        // Fallback timeout - increased for slower devices
         setTimeout(() => {
-          resolve();
-        }, 5000);
+          if (!resolved) {
+            resolved = true;
+            resolve();
+          }
+        }, 8000); // Increased from 5000 to 8000 for slower devices
       });
       
       await sound.unloadAsync();
@@ -58,6 +122,11 @@ export const playSound = async (soundFile?: string | number, textToSpeak?: strin
     }
   } catch (error) {
     console.error('Error playing sound:', error);
+    // Try to reconfigure audio mode on error (helps with iPhone 11)
+    if (Platform.OS === 'ios') {
+      audioModeConfigured = false;
+      await configureAudioMode();
+    }
   }
 };
 

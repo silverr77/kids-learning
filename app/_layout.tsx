@@ -4,6 +4,7 @@ import { StyleSheet, I18nManager } from 'react-native';
 import { useEffect } from 'react';
 import { ThemeProvider } from '@/contexts/ThemeContext';
 import { LanguageProvider, useLanguage } from '@/contexts/LanguageContext';
+import { initializeSoundManager } from '@/utils/soundManager';
 
 function RootStack() {
   const { isRTL } = useLanguage();
@@ -35,6 +36,11 @@ function RootStack() {
 }
 
 export default function RootLayout() {
+  // Initialize audio manager when app starts (important for iPhone 11)
+  useEffect(() => {
+    initializeSoundManager();
+  }, []);
+
   return (
     <GestureHandlerRootView style={styles.container}>
       <ThemeProvider>
