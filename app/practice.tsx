@@ -99,9 +99,17 @@ export default function PracticeScreen() {
   };
 
   const generateQuestion = () => {
-    // Shuffle items for practice
-    const shuffled = [...items].sort(() => Math.random() - 0.5);
-    setShuffledItems(shuffled.slice(0, Math.min(4, items.length)));
+    if (items.length === 0) return;
+
+    const currentItem = items[currentQuestion % items.length];
+    // Always include the correct item + up to 3 others
+    const otherOptions = items
+      .filter((item) => item.id !== currentItem.id)
+      .sort(() => Math.random() - 0.5)
+      .slice(0, Math.min(3, Math.max(items.length - 1, 0)));
+
+    const options = [currentItem, ...otherOptions].sort(() => Math.random() - 0.5);
+    setShuffledItems(options);
   };
 
   const handleAnswer = async (itemId: string) => {
@@ -141,6 +149,15 @@ export default function PracticeScreen() {
     const currentItem = items[currentQuestion % items.length];
     await playSound(currentItem.sound, currentItem.pronunciation || currentItem.name);
   };
+
+  // Auto-play audio on first and subsequent questions
+  useEffect(() => {
+    if (items.length === 0) return;
+    const timer = setTimeout(() => {
+      handlePlaySound();
+    }, 200); // small delay to ensure audio system is ready
+    return () => clearTimeout(timer);
+  }, [currentQuestion, items]);
 
   const styles = createStyles(colors, isRTL);
 
@@ -200,6 +217,15 @@ export default function PracticeScreen() {
           </TouchableOpacity>
         </View>
 
+        {/* Feedback above options */}
+        {showFeedback && (
+          <View style={styles.feedbackContainer}>
+            <Text style={[styles.feedbackText, { color: isCorrect ? colors.success : colors.error }]}>
+              {isCorrect ? t('greatJob') : t('tryAgain')}
+            </Text>
+          </View>
+        )}
+
         {/* Options Grid */}
         <View style={styles.optionsContainer}>
           {shuffledItems.map((item) => {
@@ -229,28 +255,22 @@ export default function PracticeScreen() {
           })}
         </View>
 
-        {/* Feedback */}
-        {showFeedback && (
-          <View style={styles.feedbackContainer}>
-            <Text style={[styles.feedbackText, { color: isCorrect ? colors.success : colors.error }]}>
-              {isCorrect ? t('greatJob') : t('tryAgain')}
-            </Text>
-          </View>
-        )}
       </ScrollView>
 
-      {/* Skip Button - Fixed at bottom */}
-      <View style={[styles.skipContainer, { paddingBottom: insets.bottom }]}>
-        <Button
-          title={isRTL ? `← ${t('challenge')}` : `${t('challenge')} →`}
-          onPress={async () => {
-            await saveCurrentProgress();
-            router.push({ pathname: '/challenge', params: { levelId } });
-          }}
-          variant="secondary"
-          size="medium"
-        />
-      </View>
+      {/* Challenge Button - only after finishing practice */}
+      {currentQuestion >= items.length - 1 && showFeedback && (
+        <View style={[styles.skipContainer, { paddingBottom: insets.bottom }]}>
+          <Button
+            title={isRTL ? `← ${t('challenge')}` : `${t('challenge')} →`}
+            onPress={async () => {
+              await saveCurrentProgress();
+              router.push({ pathname: '/challenge', params: { levelId } });
+            }}
+            variant="secondary"
+            size="medium"
+          />
+        </View>
+      )}
     </SafeAreaView>
   );
 }
@@ -700,6 +720,16 @@ function createStyles(colors: any, isRTL: boolean) {
       backgroundColor: colors.error,
       borderWidth: 3,
       borderColor: colors.error,
+    },
+    feedbackContainer: {
+      alignItems: 'center',
+      padding: 8,
+      marginBottom: 12,
+      width: '100%',
+    },
+    feedbackText: {
+      fontSize: 24,
+      fontWeight: 'bold',
     },
   visualContainer: {
     justifyContent: 'center',

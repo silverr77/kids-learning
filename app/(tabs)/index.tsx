@@ -64,6 +64,13 @@ export default function HomeScreen() {
     }
   };
 
+  const getGreetingKey = () => {
+    const hour = new Date().getHours();
+    if (hour < 12) return 'goodMorning';
+    if (hour < 18) return 'goodAfternoon';
+    return 'goodEvening';
+  };
+
   const styles = createStyles(colors, isRTL);
 
   return (
@@ -74,7 +81,7 @@ export default function HomeScreen() {
           <View style={styles.headerContent}>
             <View style={styles.greetingContainer}>
               <Ionicons name={isRTL ? "hand-right" : "hand-left"} size={24} color="#FFFFFF" />
-              <Text style={styles.greeting}> {t('home')}</Text>
+              <Text style={styles.greeting}> {t(getGreetingKey())}</Text>
             </View>
             <View style={styles.starBadge}>
               <Ionicons name="star" size={20} color="#FFFFFF" />

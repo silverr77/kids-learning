@@ -62,39 +62,25 @@ export default function ChallengeScreen() {
     loadLevel();
   }, [levelId, language]);
 
-  // Auto-play question audio when questions are loaded or question changes
+  // Auto-play question audio when questions load or change (including first question)
   useEffect(() => {
     if (questions.length === 0) return;
     
     const question = questions[currentQuestion];
     if (!question || !question.audio) return;
 
-    // For the first question, check if we should skip (language change)
-    if (currentQuestion === 0) {
-      if (!hasPlayedInitialAudioRef.current && !skipNextAudioRef.current) {
-        // Play first question audio with a small delay
-        const timer = setTimeout(() => {
-          if (typeof question.audio === 'number') {
-            playSound(question.audio);
-          } else {
-            playSound(undefined, question.audio);
-          }
-          hasPlayedInitialAudioRef.current = true;
-        }, 200);
-        return () => clearTimeout(timer);
-      } else if (skipNextAudioRef.current) {
-        // Reset the flag after skipping once (language change)
-        skipNextAudioRef.current = false;
-        hasPlayedInitialAudioRef.current = true;
-      }
-    } else {
-      // Auto-play audio for subsequent questions
+    // Play audio with a small delay to ensure audio system is ready
+    const timer = setTimeout(() => {
       if (typeof question.audio === 'number') {
         playSound(question.audio);
       } else {
         playSound(undefined, question.audio);
       }
-    }
+      hasPlayedInitialAudioRef.current = true;
+      skipNextAudioRef.current = false;
+    }, 200);
+
+    return () => clearTimeout(timer);
   }, [questions, currentQuestion]);
 
   const loadLevel = () => {
@@ -402,7 +388,7 @@ export default function ChallengeScreen() {
           </TouchableOpacity>
         </View>
 
-        {/* Feedback */}
+        {/* Feedback above options */}
         {showFeedback && (
           <View style={styles.feedbackContainer}>
             <Text style={[styles.feedbackText, { color: isCorrect ? colors.success : colors.error }]}>
@@ -410,6 +396,7 @@ export default function ChallengeScreen() {
             </Text>
           </View>
         )}
+
         {/* Options */}
         <View style={styles.optionsContainer}>
           {question.options?.map((optionId) => {
@@ -950,7 +937,9 @@ function createStyles(colors: any, isRTL: boolean) {
     },
     feedbackContainer: {
       alignItems: 'center',
-      padding: 5,
+      padding: 8,
+      marginBottom: 12,
+      width: '100%',
     },
     feedbackText: {
       fontSize: 28,

@@ -117,6 +117,9 @@ const translations: Translations = {
   sequenceGameOver: { en: 'Level {level} - Score: {score}', fr: 'Niveau {level} - Score: {score}', ar: 'المستوى {level} - النقاط: {score}' },
   youGot: { en: 'You got', fr: 'Vous avez obtenu', ar: 'حصلت على' },
   outOf: { en: 'out of', fr: 'sur', ar: 'من' },
+  goodMorning: { en: 'Good morning', fr: 'Bonjour', ar: 'صباح الخير' },
+  goodAfternoon: { en: 'Good afternoon', fr: 'Bon après-midi', ar: 'مساء الخير' },
+  goodEvening: { en: 'Good evening', fr: 'Bonsoir', ar: 'مساء الخير' },
   // Level titles
   farmAnimals: { en: 'Farm Animals', fr: 'Animaux de la ferme', ar: 'حيوانات المزرعة' },
   wildAnimals: { en: 'Wild Animals', fr: 'Animaux sauvages', ar: 'الحيوانات البرية' },
