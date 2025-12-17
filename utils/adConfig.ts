@@ -20,13 +20,12 @@
 
 // Google Official Test Ad Unit IDs (safe for local development)
 export const AD_UNIT_IDS = {
-  // Banner Ad Test IDs (Google Official)
-  BANNER_ANDROID: 'ca-app-pub-3940256099942544/6300978111', // Google Test Banner for Android
-  BANNER_IOS: 'ca-app-pub-3940256099942544/2934735716', // Google Test Banner for iOS
+  // Production IDs provided by the user
+  BANNER_ANDROID: 'ca-app-pub-3002057065219882~5172338492',
+  BANNER_IOS: 'ca-app-pub-3002057065219882~5172338492',
   
-  // Interstitial Ad Test IDs (Google Official)
-  INTERSTITIAL_ANDROID: 'ca-app-pub-3940256099942544/1033173712', // Google Test Interstitial for Android
-  INTERSTITIAL_IOS: 'ca-app-pub-3940256099942544/4411468910', // Google Test Interstitial for iOS
+  INTERSTITIAL_ANDROID: 'ca-app-pub-3002057065219882~5172338492',
+  INTERSTITIAL_IOS: 'ca-app-pub-3002057065219882~5172338492',
 };
 
 // Platform-specific ad unit IDs
@@ -54,6 +53,6 @@ export const AD_SETTINGS = {
 // Test App IDs (for app.json configuration)
 // These are Google's official test App IDs for development
 export const TEST_APP_IDS = {
-  ANDROID: 'ca-app-pub-3940256099942544~3347511713', // Google Test App ID for Android
-  IOS: 'ca-app-pub-3940256099942544~1458002511', // Google Test App ID for iOS
+  ANDROID: 'ca-app-pub-3002057065219882~5172338492',
+  IOS: 'ca-app-pub-3002057065219882~5172338492',
 };
