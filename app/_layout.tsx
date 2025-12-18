@@ -1,5 +1,6 @@
 import { Stack } from 'expo-router';
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
+import { SafeAreaProvider } from 'react-native-safe-area-context';
 import { StyleSheet, I18nManager } from 'react-native';
 import { useEffect } from 'react';
 import { ThemeProvider } from '@/contexts/ThemeContext';
@@ -24,6 +25,7 @@ function RootStack() {
         animation: isRTL ? 'slide_from_left' : 'slide_from_right',
       }}
     >
+      <Stack.Screen name="index" options={{ headerShown: false }} />
       <Stack.Screen name="onboarding" options={{ headerShown: false }} />
       <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
       <Stack.Screen name="level-overview" />
@@ -43,11 +45,13 @@ export default function RootLayout() {
 
   return (
     <GestureHandlerRootView style={styles.container}>
-      <ThemeProvider>
-        <LanguageProvider>
-          <RootStack />
-        </LanguageProvider>
-      </ThemeProvider>
+      <SafeAreaProvider>
+        <ThemeProvider>
+          <LanguageProvider>
+            <RootStack />
+          </LanguageProvider>
+        </ThemeProvider>
+      </SafeAreaProvider>
     </GestureHandlerRootView>
   );
 }

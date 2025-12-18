@@ -13,7 +13,7 @@ import { getProgress, saveProgress } from '@/utils/storage';
 import { getLevelTitle } from '@/utils/translations';
 import { useLanguage } from '@/contexts/LanguageContext';
 import { playSuccessSound } from '@/utils/soundManager';
-import { Category } from '@/types';
+import { Category, UserProgress } from '@/types';
 import { interstitialAdManager } from '@/utils/interstitialAd';
 
 export default function RewardScreen() {
@@ -68,7 +68,8 @@ export default function RewardScreen() {
       
       // Ensure categoryProgress exists and has the category
       if (!progress.categoryProgress) {
-        progress.categoryProgress = {};
+        const { getDefaultProgress } = await import('@/utils/storage');
+        progress.categoryProgress = getDefaultProgress().categoryProgress;
       }
       if (!progress.categoryProgress[category]) {
         const categoryTotal = getLevelsByCategory(category as Category).length;

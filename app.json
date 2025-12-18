@@ -1,8 +1,8 @@
 {
   "expo": {
-    "name": "Learn for Kids - تعلم للأطفال",
+    "name": "Learn for Kids",
     "slug": "learn-for-kids",
-    "version": "1.0.0",
+    "version": "1.2.0",
     "orientation": "portrait",
     "userInterfaceStyle": "light",
     "icon": "./assets/logo.png",
@@ -16,7 +16,8 @@
     ],
     "ios": {
       "supportsTablet": true,
-      "bundleIdentifier": "com.learnforkids.app"
+      "bundleIdentifier": "com.learnforkids.app",
+      "buildNumber": "5"
     },
     "android": {
       "adaptiveIcon": {
@@ -49,9 +50,8 @@
     "extra": {
       "router": {},
       "eas": {
-        "projectId": "2abe09de-7b2f-432c-bc19-7003d70c1dca"
+        "projectId": "4df4d81a-fb82-4b52-ae18-57b2fbb87345"
       }
-    },
-    "owner": "khalidbouhouch0"
+    }
   }
 }
