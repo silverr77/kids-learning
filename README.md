@@ -1,6 +1,6 @@
-# Learn for Kids 🎓
+# Train you brains 🎓
 
-A beautiful, educational mobile app for kids (ages 3-7) built with React Native and Expo. Teach children about animals, letters, numbers, colors, and shapes through interactive games and challenges.
+A beautiful, educational mobile app (ages 3-7) built with React Native and Expo. Teach children about animals, letters, numbers, colors, and shapes through interactive games and challenges.
 
 ## Features
 
@@ -49,7 +49,7 @@ npm start
 ## Project Structure
 
 ```
-learn-for-kids/
+train-your-brain/
 ├── app/                    # Expo Router screens
 │   ├── index.tsx          # Home screen
 │   ├── level-overview.tsx # Level selection
