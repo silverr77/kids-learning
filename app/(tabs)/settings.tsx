@@ -104,7 +104,7 @@ export default function SettingsScreen() {
 
   const handlePrivacyPolicy = () => {
     const message =
-      'Learn for Kids stores progress, badges, and language settings locally on your device. ' +
+      'This app stores progress, badges, and language settings locally on your device. ' +
       'We do not collect personal information like name, email, or precise location. ' +
       'Ads are served via Google AdMob, which may collect device identifiers for ad delivery and frequency capping. ' +
       'Audio and media are used only to play learning content you select. ' +
@@ -115,7 +115,7 @@ export default function SettingsScreen() {
   const handleAbout = () => {
     Alert.alert(
       t('about'),
-      'Learn for Kids\nVersion 1.0.0\n\nAn educational app for children to learn animals, numbers, colors, shapes, organs, countries, fruits, and sports through interactive games.',
+      'تحدي - درب عقلك\nVersion 1.5.0\n\nAn educational app to learn animals, numbers, colors, shapes, countries, fruits, sports, and vehicles through interactive games and challenges.',
       [{ text: 'OK' }]
     );
   };

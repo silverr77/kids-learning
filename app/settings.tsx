@@ -85,7 +85,7 @@ export default function SettingsScreen() {
     return (
       <SafeAreaView style={styles.container}>
         <View style={styles.parentGateContainer}>
-          <Text style={styles.parentGateTitle}>Parent Gate 🔒</Text>
+          <Text style={styles.parentGateTitle}>Settings Lock 🔒</Text>
           <Text style={styles.parentGateQuestion}>What is 7 + 3?</Text>
           <TextInput
             style={styles.parentGateInput}

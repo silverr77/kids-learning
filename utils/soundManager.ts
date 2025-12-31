@@ -19,7 +19,7 @@ const configureAudioMode = async () => {
   try {
     // Set audio mode to playback - this is critical for iPhone 11 and other iOS devices
     await Audio.setAudioModeAsync({
-      playsInSilentModeIOS: true, // Play even when device is in silent mode (important for kids apps)
+      playsInSilentModeIOS: true, // Play even when device is in silent mode
       staysActiveInBackground: false,
       shouldDuckAndroid: true,
       playThroughEarpieceAndroid: false,
