@@ -70,7 +70,7 @@ export default function BannerAdComponent({
         unitId={adUnitId}
         size={size}
         requestOptions={{
-          requestNonPersonalizedAdsOnly: true, // COPPA compliance for kids apps
+          requestNonPersonalizedAdsOnly: true, // COPPA compliance - non-personalized ads only
         }}
         onAdLoaded={() => {
           console.log('Banner ad loaded');
